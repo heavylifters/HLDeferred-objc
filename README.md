@@ -36,7 +36,7 @@ Using HLDeferred in your iOS app project
 - In your app target inspector (General tab), make your project dependent on the HLDeferred target in HLDeferred.xcodeproj
 - Drag the libHLDeferred.a static library (under HLDeferred.xcodeproj in your app project) inside the "Link Binary with Libraries" section of your app target.
 - Drag the "HLDeferred Headers" group from the HLDeferred project into your app project.
-- #import and use the HLDeferred classes in your app
+- import and use the HLDeferred classes in your app
 - Drag-and-drop YAJL.framework into your app's Frameworks group. This should automatically set up your project to link against YAJL.framework as well.
 
 Running Unit Tests
