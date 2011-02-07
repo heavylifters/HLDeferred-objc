@@ -1,0 +1,14 @@
+//
+//  HLDeferredTests_Prefix.pch
+//  HLDeferred
+//
+//  Copyright 2011 HeavyLifters Network Ltd.. All rights reserved.
+//  See included LICENSE file (MIT) for licensing information.
+//
+// Prefix header for all source files of the 'CocoaTouchStaticLibrary' target in the 'CocoaTouchStaticLibrary' project.
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+    #import <GHUnitIOS/GHUnit.h>
+#endif

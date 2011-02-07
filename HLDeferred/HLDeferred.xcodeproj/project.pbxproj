@@ -1,0 +1,525 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		388531B51300795D00A256DB /* HLDownloadDataSourceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 388531B41300795D00A256DB /* HLDownloadDataSourceTest.m */; };
+		388531E013007DAD00A256DB /* HLJSONDataSourceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 388531DF13007DAD00A256DB /* HLJSONDataSourceTest.m */; };
+		388532951300859100A256DB /* YAJL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79B87F912F9DCAD0048464F /* YAJL.framework */; };
+		3885A63412FBC56900BA5864 /* HLDeferredDataSourceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3885A63312FBC56900BA5864 /* HLDeferredDataSourceTest.m */; };
+		3885A67912FC783000BA5864 /* HLDeferredConcurrentDataSourceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3885A67812FC783000BA5864 /* HLDeferredConcurrentDataSourceTest.m */; };
+		38CB29B312FDF0BD00739549 /* HLURLDataSourceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 38CB29B212FDF0BD00739549 /* HLURLDataSourceTest.m */; };
+		A7171D8112F8BBC800FF92BB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7171D8012F8BBC800FF92BB /* CoreGraphics.framework */; };
+		A7171D8212F8BBC800FF92BB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
+		A7171D8412F8BBC800FF92BB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7171D8312F8BBC800FF92BB /* UIKit.framework */; };
+		A7171D8912F8BBDB00FF92BB /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7171D5D12F8BB7C00FF92BB /* GHUnitIOS.framework */; };
+		A72B196F12F77215007685CF /* HLDeferred.h in Headers */ = {isa = PBXBuildFile; fileRef = A72B196312F77215007685CF /* HLDeferred.h */; };
+		A72B197012F77215007685CF /* HLDeferred.m in Sources */ = {isa = PBXBuildFile; fileRef = A72B196412F77215007685CF /* HLDeferred.m */; };
+		A72B197112F77215007685CF /* HLDeferredConcurrentDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = A72B196512F77215007685CF /* HLDeferredConcurrentDataSource.h */; };
+		A72B197212F77215007685CF /* HLDeferredConcurrentDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A72B196612F77215007685CF /* HLDeferredConcurrentDataSource.m */; };
+		A72B197312F77215007685CF /* HLDownloadDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = A72B196712F77215007685CF /* HLDownloadDataSource.h */; };
+		A72B197412F77215007685CF /* HLDownloadDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A72B196812F77215007685CF /* HLDownloadDataSource.m */; };
+		A72B197512F77215007685CF /* HLJSONDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = A72B196912F77215007685CF /* HLJSONDataSource.h */; };
+		A72B197712F77215007685CF /* HLDeferredDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = A72B196B12F77215007685CF /* HLDeferredDataSource.h */; };
+		A72B197812F77215007685CF /* HLDeferredDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A72B196C12F77215007685CF /* HLDeferredDataSource.m */; };
+		A72B197912F77215007685CF /* HLURLDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = A72B196D12F77215007685CF /* HLURLDataSource.h */; };
+		A72B197A12F77215007685CF /* HLURLDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A72B196E12F77215007685CF /* HLURLDataSource.m */; };
+		A7578F0512FB2E4300D52C21 /* HLFailure.h in Headers */ = {isa = PBXBuildFile; fileRef = A7578F0312FB2E4300D52C21 /* HLFailure.h */; };
+		A7578F0612FB2E4300D52C21 /* HLFailure.m in Sources */ = {isa = PBXBuildFile; fileRef = A7578F0412FB2E4300D52C21 /* HLFailure.m */; };
+		A75790EE12FB7B3500D52C21 /* HLDeferredListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A75790ED12FB7B3500D52C21 /* HLDeferredListTest.m */; };
+		A757910412FB7C4C00D52C21 /* HLDeferredList.m in Sources */ = {isa = PBXBuildFile; fileRef = A757910312FB7C4C00D52C21 /* HLDeferredList.m */; };
+		A757910612FB7C7400D52C21 /* HLDeferredList.h in Headers */ = {isa = PBXBuildFile; fileRef = A757910512FB7C5A00D52C21 /* HLDeferredList.h */; };
+		A764F5C812F8C1560002D17E /* libHLDeferred.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libHLDeferred.a */; };
+		A76B841712F8BD2200ACDD85 /* GHUnitIOSTestMain.m in Sources */ = {isa = PBXBuildFile; fileRef = A76B841612F8BD2200ACDD85 /* GHUnitIOSTestMain.m */; };
+		A76B842C12F8BE8000ACDD85 /* HLDeferredTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A76B842B12F8BE8000ACDD85 /* HLDeferredTest.m */; };
+		A79B87DD12F9DC410048464F /* HLJSONDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A72B196A12F77215007685CF /* HLJSONDataSource.m */; };
+		A79B87FB12F9DCAD0048464F /* YAJL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79B87F912F9DCAD0048464F /* YAJL.framework */; };
+		AA747D9F0F9514B9006C5449 /* HLDeferred_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* HLDeferred_Prefix.pch */; };
+		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A757912A12FB866C00D52C21 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC07D0554694100DB518D;
+			remoteInfo = HLDeferred;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		388531B41300795D00A256DB /* HLDownloadDataSourceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HLDownloadDataSourceTest.m; path = Tests/HLDownloadDataSourceTest.m; sourceTree = "<group>"; };
+		388531DF13007DAD00A256DB /* HLJSONDataSourceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HLJSONDataSourceTest.m; path = Tests/HLJSONDataSourceTest.m; sourceTree = "<group>"; };
+		3885A63312FBC56900BA5864 /* HLDeferredDataSourceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HLDeferredDataSourceTest.m; path = Tests/HLDeferredDataSourceTest.m; sourceTree = "<group>"; };
+		3885A67812FC783000BA5864 /* HLDeferredConcurrentDataSourceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HLDeferredConcurrentDataSourceTest.m; path = Tests/HLDeferredConcurrentDataSourceTest.m; sourceTree = "<group>"; };
+		38CB29B212FDF0BD00739549 /* HLURLDataSourceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HLURLDataSourceTest.m; path = Tests/HLURLDataSourceTest.m; sourceTree = "<group>"; };
+		A7171D5D12F8BB7C00FF92BB /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnitIOS.framework; path = Frameworks/GHUnitIOS.framework; sourceTree = "<group>"; };
+		A7171D7A12F8BBA700FF92BB /* Tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tests.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7171D7C12F8BBA700FF92BB /* HLDeferredTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "HLDeferredTests-Info.plist"; path = "Tests/HLDeferredTests-Info.plist"; sourceTree = "<group>"; };
+		A7171D8012F8BBC800FF92BB /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		A7171D8312F8BBC800FF92BB /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		A72B196312F77215007685CF /* HLDeferred.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HLDeferred.h; path = Classes/HLDeferred.h; sourceTree = "<group>"; };
+		A72B196412F77215007685CF /* HLDeferred.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HLDeferred.m; sourceTree = "<group>"; };
+		A72B196512F77215007685CF /* HLDeferredConcurrentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HLDeferredConcurrentDataSource.h; path = Classes/HLDeferredConcurrentDataSource.h; sourceTree = "<group>"; };
+		A72B196612F77215007685CF /* HLDeferredConcurrentDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HLDeferredConcurrentDataSource.m; sourceTree = "<group>"; };
+		A72B196712F77215007685CF /* HLDownloadDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HLDownloadDataSource.h; path = Classes/HLDownloadDataSource.h; sourceTree = "<group>"; };
+		A72B196812F77215007685CF /* HLDownloadDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HLDownloadDataSource.m; sourceTree = "<group>"; };
+		A72B196912F77215007685CF /* HLJSONDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HLJSONDataSource.h; path = Classes/HLJSONDataSource.h; sourceTree = "<group>"; };
+		A72B196A12F77215007685CF /* HLJSONDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HLJSONDataSource.m; sourceTree = "<group>"; };
+		A72B196B12F77215007685CF /* HLDeferredDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HLDeferredDataSource.h; path = Classes/HLDeferredDataSource.h; sourceTree = "<group>"; };
+		A72B196C12F77215007685CF /* HLDeferredDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HLDeferredDataSource.m; sourceTree = "<group>"; };
+		A72B196D12F77215007685CF /* HLURLDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HLURLDataSource.h; path = Classes/HLURLDataSource.h; sourceTree = "<group>"; };
+		A72B196E12F77215007685CF /* HLURLDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HLURLDataSource.m; sourceTree = "<group>"; };
+		A7578F0312FB2E4300D52C21 /* HLFailure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HLFailure.h; path = Classes/HLFailure.h; sourceTree = "<group>"; };
+		A7578F0412FB2E4300D52C21 /* HLFailure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HLFailure.m; sourceTree = "<group>"; };
+		A75790ED12FB7B3500D52C21 /* HLDeferredListTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HLDeferredListTest.m; path = Tests/HLDeferredListTest.m; sourceTree = "<group>"; };
+		A757910312FB7C4C00D52C21 /* HLDeferredList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HLDeferredList.m; sourceTree = "<group>"; };
+		A757910512FB7C5A00D52C21 /* HLDeferredList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HLDeferredList.h; path = Classes/HLDeferredList.h; sourceTree = "<group>"; };
+		A76B841612F8BD2200ACDD85 /* GHUnitIOSTestMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GHUnitIOSTestMain.m; path = Tests/GHUnitIOSTestMain.m; sourceTree = "<group>"; };
+		A76B841F12F8BD4C00ACDD85 /* HLDeferredTests_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HLDeferredTests_Prefix.pch; path = Tests/HLDeferredTests_Prefix.pch; sourceTree = "<group>"; };
+		A76B842B12F8BE8000ACDD85 /* HLDeferredTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HLDeferredTest.m; path = Tests/HLDeferredTest.m; sourceTree = "<group>"; };
+		A79B87F912F9DCAD0048464F /* YAJL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = YAJL.framework; path = Frameworks/YAJL.framework; sourceTree = "<group>"; };
+		AA747D9E0F9514B9006C5449 /* HLDeferred_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HLDeferred_Prefix.pch; sourceTree = SOURCE_ROOT; };
+		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		D2AAC07E0554694100DB518D /* libHLDeferred.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHLDeferred.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A7171D7812F8BBA700FF92BB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A7171D8912F8BBDB00FF92BB /* GHUnitIOS.framework in Frameworks */,
+				A7171D8112F8BBC800FF92BB /* CoreGraphics.framework in Frameworks */,
+				A7171D8212F8BBC800FF92BB /* Foundation.framework in Frameworks */,
+				A7171D8412F8BBC800FF92BB /* UIKit.framework in Frameworks */,
+				A764F5C812F8C1560002D17E /* libHLDeferred.a in Frameworks */,
+				388532951300859100A256DB /* YAJL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2AAC07C0554694100DB518D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
+				A79B87FB12F9DCAD0048464F /* YAJL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2AAC07E0554694100DB518D /* libHLDeferred.a */,
+				A7171D7A12F8BBA700FF92BB /* Tests.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* HLDeferred */ = {
+			isa = PBXGroup;
+			children = (
+				A79B88AD12FA0D190048464F /* HLDeferred Headers */,
+				A72B196212F77215007685CF /* Classes */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				A76B841512F8BCE500ACDD85 /* Tests */,
+				0867D69AFE84028FC02AAC07 /* Frameworks */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = HLDeferred;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A79B87F912F9DCAD0048464F /* YAJL.framework */,
+				A7171D8312F8BBC800FF92BB /* UIKit.framework */,
+				A7171D8012F8BBC800FF92BB /* CoreGraphics.framework */,
+				A7171D5D12F8BB7C00FF92BB /* GHUnitIOS.framework */,
+				AACBBE490F95108600F1A2B1 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				AA747D9E0F9514B9006C5449 /* HLDeferred_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		A72B196212F77215007685CF /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				A79B87F812F9DC610048464F /* Data Sources */,
+				A72B196412F77215007685CF /* HLDeferred.m */,
+				A757910312FB7C4C00D52C21 /* HLDeferredList.m */,
+				A72B196C12F77215007685CF /* HLDeferredDataSource.m */,
+				A72B196612F77215007685CF /* HLDeferredConcurrentDataSource.m */,
+				A7578F0412FB2E4300D52C21 /* HLFailure.m */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		A76B841512F8BCE500ACDD85 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				A7171D7C12F8BBA700FF92BB /* HLDeferredTests-Info.plist */,
+				A76B841F12F8BD4C00ACDD85 /* HLDeferredTests_Prefix.pch */,
+				A76B841612F8BD2200ACDD85 /* GHUnitIOSTestMain.m */,
+				A76B842B12F8BE8000ACDD85 /* HLDeferredTest.m */,
+				A75790ED12FB7B3500D52C21 /* HLDeferredListTest.m */,
+				3885A63312FBC56900BA5864 /* HLDeferredDataSourceTest.m */,
+				3885A67812FC783000BA5864 /* HLDeferredConcurrentDataSourceTest.m */,
+				38CB29B212FDF0BD00739549 /* HLURLDataSourceTest.m */,
+				388531B41300795D00A256DB /* HLDownloadDataSourceTest.m */,
+				388531DF13007DAD00A256DB /* HLJSONDataSourceTest.m */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+		A79B87F812F9DC610048464F /* Data Sources */ = {
+			isa = PBXGroup;
+			children = (
+				A72B196812F77215007685CF /* HLDownloadDataSource.m */,
+				A72B196A12F77215007685CF /* HLJSONDataSource.m */,
+				A72B196E12F77215007685CF /* HLURLDataSource.m */,
+			);
+			name = "Data Sources";
+			sourceTree = "<group>";
+		};
+		A79B88AD12FA0D190048464F /* HLDeferred Headers */ = {
+			isa = PBXGroup;
+			children = (
+				A72B196712F77215007685CF /* HLDownloadDataSource.h */,
+				A72B196912F77215007685CF /* HLJSONDataSource.h */,
+				A72B196D12F77215007685CF /* HLURLDataSource.h */,
+				A72B196312F77215007685CF /* HLDeferred.h */,
+				A757910512FB7C5A00D52C21 /* HLDeferredList.h */,
+				A72B196B12F77215007685CF /* HLDeferredDataSource.h */,
+				A72B196512F77215007685CF /* HLDeferredConcurrentDataSource.h */,
+				A7578F0312FB2E4300D52C21 /* HLFailure.h */,
+			);
+			name = "HLDeferred Headers";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC07A0554694100DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA747D9F0F9514B9006C5449 /* HLDeferred_Prefix.pch in Headers */,
+				A72B196F12F77215007685CF /* HLDeferred.h in Headers */,
+				A72B197112F77215007685CF /* HLDeferredConcurrentDataSource.h in Headers */,
+				A72B197312F77215007685CF /* HLDownloadDataSource.h in Headers */,
+				A72B197512F77215007685CF /* HLJSONDataSource.h in Headers */,
+				A72B197712F77215007685CF /* HLDeferredDataSource.h in Headers */,
+				A72B197912F77215007685CF /* HLURLDataSource.h in Headers */,
+				A7578F0512FB2E4300D52C21 /* HLFailure.h in Headers */,
+				A757910612FB7C7400D52C21 /* HLDeferredList.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		A7171D7912F8BBA700FF92BB /* HLDeferredTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A7171D7F12F8BBA800FF92BB /* Build configuration list for PBXNativeTarget "HLDeferredTests" */;
+			buildPhases = (
+				A7171D7612F8BBA700FF92BB /* Resources */,
+				A7171D7712F8BBA700FF92BB /* Sources */,
+				A7171D7812F8BBA700FF92BB /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A757912B12FB866C00D52C21 /* PBXTargetDependency */,
+			);
+			name = HLDeferredTests;
+			productName = Tests;
+			productReference = A7171D7A12F8BBA700FF92BB /* Tests.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D2AAC07D0554694100DB518D /* HLDeferred */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "HLDeferred" */;
+			buildPhases = (
+				D2AAC07A0554694100DB518D /* Headers */,
+				D2AAC07B0554694100DB518D /* Sources */,
+				D2AAC07C0554694100DB518D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HLDeferred;
+			productName = HLDeferred;
+			productReference = D2AAC07E0554694100DB518D /* libHLDeferred.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "HLDeferred" */;
+			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 0867D691FE84028FC02AAC07 /* HLDeferred */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2AAC07D0554694100DB518D /* HLDeferred */,
+				A7171D7912F8BBA700FF92BB /* HLDeferredTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A7171D7612F8BBA700FF92BB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A7171D7712F8BBA700FF92BB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A76B841712F8BD2200ACDD85 /* GHUnitIOSTestMain.m in Sources */,
+				A76B842C12F8BE8000ACDD85 /* HLDeferredTest.m in Sources */,
+				A75790EE12FB7B3500D52C21 /* HLDeferredListTest.m in Sources */,
+				3885A63412FBC56900BA5864 /* HLDeferredDataSourceTest.m in Sources */,
+				3885A67912FC783000BA5864 /* HLDeferredConcurrentDataSourceTest.m in Sources */,
+				38CB29B312FDF0BD00739549 /* HLURLDataSourceTest.m in Sources */,
+				388531B51300795D00A256DB /* HLDownloadDataSourceTest.m in Sources */,
+				388531E013007DAD00A256DB /* HLJSONDataSourceTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2AAC07B0554694100DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A72B197012F77215007685CF /* HLDeferred.m in Sources */,
+				A757910412FB7C4C00D52C21 /* HLDeferredList.m in Sources */,
+				A72B197212F77215007685CF /* HLDeferredConcurrentDataSource.m in Sources */,
+				A72B197412F77215007685CF /* HLDownloadDataSource.m in Sources */,
+				A72B197812F77215007685CF /* HLDeferredDataSource.m in Sources */,
+				A72B197A12F77215007685CF /* HLURLDataSource.m in Sources */,
+				A79B87DD12F9DC410048464F /* HLJSONDataSource.m in Sources */,
+				A7578F0612FB2E4300D52C21 /* HLFailure.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A757912B12FB866C00D52C21 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2AAC07D0554694100DB518D /* HLDeferred */;
+			targetProxy = A757912A12FB866C00D52C21 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB921F08733DC00010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /tmp/HLDeferred.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = HLDeferred_Prefix.pch;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = HLDeferred;
+			};
+			name = Debug;
+		};
+		1DEB922008733DC00010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				DSTROOT = /tmp/HLDeferred.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = HLDeferred_Prefix.pch;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = HLDeferred;
+			};
+			name = Release;
+		};
+		1DEB922308733DC00010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
+				PREBINDING = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1DEB922408733DC00010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
+				PREBINDING = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A7171D7D12F8BBA800FF92BB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Tests/HLDeferredTests_Prefix.pch;
+				INFOPLIST_FILE = "Tests/HLDeferredTests-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					UIKit,
+					"-ObjC",
+					"-all_load",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Tests;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		A7171D7E12F8BBA800FF92BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Tests/HLDeferredTests_Prefix.pch;
+				INFOPLIST_FILE = "Tests/HLDeferredTests-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					UIKit,
+					"-ObjC",
+					"-all_load",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Tests;
+				SDKROOT = iphoneos;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "HLDeferred" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB921F08733DC00010E9CD /* Debug */,
+				1DEB922008733DC00010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "HLDeferred" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB922308733DC00010E9CD /* Debug */,
+				1DEB922408733DC00010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A7171D7F12F8BBA800FF92BB /* Build configuration list for PBXNativeTarget "HLDeferredTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A7171D7D12F8BBA800FF92BB /* Debug */,
+				A7171D7E12F8BBA800FF92BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}
