@@ -57,7 +57,26 @@ If a callback (or errback) returns an exception, the next errback is called, oth
 The Most Basic Example
 ----------------------
 
-<script src="https://gist.github.com/808504.js?file=HLDeferred-example.m"></script>
+    - (void) demonstration
+    {
+        HLDeferred *d = [[HLDeferred alloc] init];
+        NSLog(@"created HLDeferred object");
+    
+        // add a callback
+        [d then: ^(id result) {
+            NSLog(@"Hello, %@", result);
+            return result;
+        }];
+        NSLog(@"added a callback to the HLDeferred's callback chain");
+    
+        // resolve the HLDeferred, which fires the callback chain
+        [d takeResult: @"World"];
+        NSLog(@"In the console, you should see 'Hello, World' in the line above");
+    
+        // Note: use [d takeError: @"DISASTER!"] to indicate failure
+    
+        [d release];
+    }
 
 Adding callbacks and errbacks
 -----------------------------
@@ -141,7 +160,38 @@ See the comments in [HLDeferredDataSource.h](https://github.com/heavylifters/HLD
 
 ### Data Source Example ###
 
-<script src="https://gist.github.com/815414.js?file=HLDeferred-data-source-example.m"></script>
+    - (HLDeferred *) requestURLFromString: (NSString *)urlString
+    {
+        // Fetch an URL and do something when it's complete
+        NSOperation *op = [[HLURLDataSource alloc] initWithURLString: urlString];
+        NSOperationQueue *queue = [NSOperationQueue mainQueue];
+        HLDeferred *d = [op requestStartOnQueue: queue];
+        [op release];
+    
+        // the "then" block runs if the operation succeeds
+        [d then: ^(id result) {
+            // result is NSData
+            // download succeeded, do something
+            return @"SUCCESS!";
+        } fail: ^(HLFailure *failure) { // runs if the operations fails
+            // request failed
+            return failure;
+        }];
+        return d;
+    }
+    
+    - (void) main
+    {
+        HLDeferred *d = [self requestURLFromString: @"http://example.com/"];
+        // both means "in the case of success or failure"
+        [d both: ^(id result) {
+            // run after the callback specified in requestURLFromString
+            NSLog(@"result is: %@", [result description]);
+            return result;
+        }];
+        // perhaps return d.
+        // The caller could add more callbacks
+    }
 
 Composing HLDeferred objects arbitrarily
 ----------------------------------------
@@ -166,13 +216,90 @@ It can optionally fire when the first result is obtained from the list, or when 
 
 ### Composition example ###
 
-<script src="https://gist.github.com/815396.js?file=HLDeferred-composition.m"></script>
+    - (HLDeferred *) requestLogin
+    {
+        if ([MyApp isLoggedIn]) {
+            return [HLDeferred deferredWithResult: @"ok"];
+        } else {
+            NSDictionary *ctx = ...;
+            NSOperation *op = [[HLDeferredURLRequestConcurrentOperation alloc] initWithContext: ctx];
+            NSOperationQueue *queue = [NSOperationQueue mainQueue];
+            HLDeferred *d = [op requestStartOnQueue: queue];
+            [op release];
+    
+            [d then: ^(id result) {
+                NSLog(@"login succeeded");
+                return @"ok";
+            }];
+    
+            return d;
+        }
+    }
+    
+    // assume these do network requests of some sort
+    - (HLDeferred *) requestStuff1 { ... }
+    - (HLDeferred *) requestStuff2 { ... }
+    
+    // if successful, the result is a dictionary with keys stuff1 and stuff2
+    - (HLDeferred *) requestMyStuff
+    {
+        // call requestLogin and add a callback to its callback chain
+        // return that deferred, which the caller can add its own
+        // callbacks and/or errbacks to.
+        return [[self requestLogin] then: ^(id result) {
+            if ([@"ok" isEqualToString: [result description]]) {
+                NSArray *stuffs = [NSArray arrayWithObjects:
+                    [self requestStuff1],
+                    [self requestStuff2],
+                    nil];
+                HLDeferredList *ds = [[HLDeferredList alloc] initWithDeferreds: stuffs
+                                                              fireOnFirstError: YES];
+                [ds then: ^(id result) {
+                    // result is an NSArray containing 2 objects
+                    //  - the result of requestStuff1's HLDeferred
+                    //  - the result of requestStuff2's HLDeferred
+                    NSDictionary *dict = [[NSDictionary alloc] init];
+                    [dict setObject: [result objectAtIndex: 0] forKey: @"stuff1"];
+                    [dict setObject: [result objectAtIndex: 1] forKey: @"stuff2"];
+                    return [dict autorelease];
+                }];
+                return [ds autorelease];
+            } else {
+                // returning an exception switches the execution of the
+                // callback chain from the "then branch" to the "fail branch"
+                return [HLFailure wrap: result];
+            }
+        }];
+    }
+    
+    - (void) main
+    {
+        [[self requestMyStuff] then: ^(id result) {
+            // at this point, we know requestStuff1 and requestStuff2
+            // completed successfully, and result is an NSDictionary
+            return result;
+        } fail: (HLFailure *failure) {
+            // the process failed
+            return failure;
+        }]
+    }
 
 ### Handling Failure with composition ###
 
 Unless you require fine-grained handling of failures, specifiy errbacks only in the top-level code that calls the first method returning an [`HLDeferred`][HLD] object. An `IBAction` method is a good example of "top-level code"...
 
-<script src="https://gist.github.com/815408.js?file=HLDeferred-composition-failure-example.m"></script>
+    - (IBAction) signIn: (id)sender
+    {
+        [[self requestSignInForUser: userid
+                       withPassword: password] then: ^(id result) {
+            // success!
+            return @"ok";
+        } fail: (HLFailure *failure) {
+            // oh noes!
+            [UIAlertView ...];
+            return failure;
+        }];
+    }
 
 If `-requestSignInForUser:withPassword:` displayed a UIAlertView as well, the user would see multiple alerts!
 
