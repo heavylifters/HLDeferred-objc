@@ -7,7 +7,7 @@
 //
 
 #import "HLJSONDataSource.h"
-#import <YAJL/YAJL.h>
+#import "JSONKit.h"
 
 @implementation HLJSONDataSource
 
@@ -15,7 +15,7 @@
 {
     NSError *error = nil;
     if ([self responseData]) {
-        id result = [[self responseData] yajl_JSON: &error];
+        id result = [[self responseData] objectFromJSONDataWithParseOptions: JKParseOptionStrict error: &error];
         if (!error) {
             [[self responseData] setLength: 0];
             [self setResult: result];

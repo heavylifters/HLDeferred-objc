@@ -17,7 +17,6 @@ You wish there was an easy way do to simple things like this. There is.
 Requirements
 ------------
 - Xcode 3.2.5 with iOS 4.2 SDK (or later)
-- [YAJL.framework](https://github.com/downloads/gabriel/yajl-objc/YAJLIOS-0.2.25.zip) (for the JSON data source)
 - iOS 4.x devices are supported
 
 Note: This code would probably work on Mac OS X 10.6+, but it hasn't been tested there.
@@ -25,8 +24,6 @@ Note: This code would probably work on Mac OS X 10.6+, but it hasn't been tested
 Building HLDeferred
 -------------------
 - Clone HLDeferred from GitHub: `git clone git://github.com/heavylifters/HLDeferred-objc.git`
-- [Download YAJL.framework for iOS](https://github.com/downloads/gabriel/yajl-objc/YAJLIOS-0.2.25.zip) (or [build it from source](https://github.com/gabriel/yajl-objc) if you prefer)
-- Copy YAJL.framework into HLDeferred-objc/HLDeferred/Frameworks
 - Open HLDeferred-objc/HLDeferred/HLDeferred.xcodeproj in Xcode
 - Build
 
@@ -37,7 +34,6 @@ Using HLDeferred in your iOS app project
 - Drag the libHLDeferred.a static library (under HLDeferred.xcodeproj in your app project) inside the "Link Binary with Libraries" section of your app target.
 - Drag the "HLDeferred Headers" group from the HLDeferred project into your app project.
 - import and use the HLDeferred classes in your app
-- Drag-and-drop YAJL.framework into your app's Frameworks group. This should automatically set up your project to link against YAJL.framework as well.
 
 Running Unit Tests
 ------------------
@@ -143,7 +139,7 @@ This library includes several concurrent `NSOperation` classes that act as data 
 
 - [`HLURLDataSource`][HLUDS] fetches the response body of an URL and returns it as `NSData`.
 - [`HLDownloadDataSource`][HLDDS] writes the response body of an URL to a file and returns the path.
-- [`HLJSONDataSource`][HLJDS] fetches a JSON document from an URL, parses it using [YAJL][], and returns the represented object.
+- [`HLJSONDataSource`][HLJDS] fetches a JSON document from an URL, parses it using [JSONKit][], and returns the represented object.
 
 ### Using the included data sources ###
 
@@ -348,5 +344,5 @@ Copyright 2011 [HeavyLifters Network Ltd.](http://heavylifters.com/) Licensed un
 [HLUDS]: https://github.com/heavylifters/HLDeferred-objc/wiki/HLURLDataSource
 [HLDDS]: https://github.com/heavylifters/HLDeferred-objc/wiki/HLDownloadDataSource
 [HLJDS]: https://github.com/heavylifters/HLDeferred-objc/wiki/HLJSONDataSource
-[YAJL]: https://github.com/gabriel/yajl-objc
+[JSONKit]: https://github.com/johnezang/JSONKit
 [GHUnit]: https://github.com/gabriel/gh-unit
