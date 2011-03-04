@@ -11,6 +11,15 @@
 @interface HLDeferredListTest : GHTestCase
 @end
 
+@interface HLDeferredListTestCanceller : NSObject <HLDeferredCancellable>
+{
+	BOOL success;
+}
+
+- (BOOL) succeeded;
+
+@end
+
 @implementation HLDeferredListTest
 
 - (void) testAllocInitDealloc
@@ -263,6 +272,84 @@
 	
 	[d release];
 	[d1 release];
+}
+
+- (void) testCancel
+{
+	HLDeferred *d1 = [[HLDeferred alloc] init];
+	HLDeferred *d2 = [[HLDeferred alloc] init];
+	HLDeferredList *d = [[HLDeferredList alloc] initWithDeferreds: [NSArray arrayWithObjects: d1, d2, nil]];
+	__block BOOL success = NO;
+	
+	[d fail: ^(HLFailure *failure) {
+		success = YES;
+		GHAssertEquals([failure value], kHLDeferredCancelled, @"errback should have been run with a kHLDeferredCancelled value");
+		return failure;
+	}];
+	
+	GHAssertFalse(success, @"errback run too soon");
+	[d cancel];
+	GHAssertTrue(success, @"errback should have run");
+	
+	[d release];
+	[d2 release];
+	[d1 release];
+}
+
+- (void) testCancelDeferredsWhenCancelled
+{
+	HLDeferredListTestCanceller *c1 = [[HLDeferredListTestCanceller alloc] init];
+	HLDeferredListTestCanceller *c2 = [[HLDeferredListTestCanceller alloc] init];
+	HLDeferred *d1 = [[HLDeferred alloc] initWithCanceller: c1];
+	HLDeferred *d2 = [[HLDeferred alloc] initWithCanceller: c2];
+	NSArray *list = [[NSArray alloc] initWithObjects: d1, d2, nil];
+	HLDeferredList *d = [[[HLDeferredList alloc] initWithDeferreds: list] cancelDeferredsWhenCancelled];
+	GHAssertFalse([c1 succeeded], @"canceller 1 was called prematurely");
+	GHAssertFalse([c2 succeeded], @"canceller 2 was called prematurely");
+
+	__block BOOL success = NO;
+	
+	[d fail: ^(HLFailure *failure) {
+		success = YES;
+		GHAssertEquals([failure value], kHLDeferredCancelled, @"errback should have been run with a kHLDeferredCancelled value");
+		return failure;
+	}];
+	
+	GHAssertFalse(success, @"errback run too soon");
+	[d cancel];
+	GHAssertTrue(success, @"errback should have run");
+	
+	GHAssertTrue([c1 succeeded], @"canceller 1 was not called");
+	GHAssertTrue([c2 succeeded], @"canceller 2 was not called");
+	[d release];
+	[d2 release];
+	[d1 release];
+	[c2 release];
+	[c1 release];
+	[list release];
+}
+
+@end
+
+@implementation HLDeferredListTestCanceller
+
+- (id) init
+{
+	self = [super init];
+	if (self) {
+		success = NO;
+	}
+	return self;
+}
+
+- (void) deferredWillCancel: (HLDeferred *)d
+{
+	success = YES;
+}
+
+- (BOOL) succeeded
+{
+	return success;
 }
 
 @end

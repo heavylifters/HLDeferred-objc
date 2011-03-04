@@ -16,6 +16,7 @@
     BOOL fireOnFirstError_;
     BOOL consumeErrors_;
     NSUInteger finishedCount_;
+	BOOL cancelDeferredsWhenCancelled_;
 }
 
 - (id) initWithDeferreds: (NSArray *)list
@@ -28,5 +29,7 @@
 - (id) initWithDeferreds: (NSArray *)list fireOnFirstResult: (BOOL)flFireOnFirstResult consumeErrors: (BOOL)flConsumeErrors;
 - (id) initWithDeferreds: (NSArray *)list fireOnFirstError: (BOOL)flFireOnFirstError;
 - (id) initWithDeferreds: (NSArray *)list consumeErrors: (BOOL)flConsumeErrors;
+
+- (HLDeferredList *) cancelDeferredsWhenCancelled;
 
 @end

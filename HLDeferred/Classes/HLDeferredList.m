@@ -25,7 +25,8 @@ NSString * const kHLDeferredListNilSentinel = @"__HLDeferredListNilSentinel__";
         consumeErrors_ = flConsumeErrors;
         results_ = [[NSMutableArray alloc] initWithCapacity: [list count]];
         finishedCount_ = 0;
-        
+        cancelDeferredsWhenCancelled_ = NO;
+		
         int i;
         for (i = 0; i < [deferreds_ count]; i++) {
             [results_ addObject: [NSNull null]];
@@ -116,14 +117,18 @@ NSString * const kHLDeferredListNilSentinel = @"__HLDeferredListNilSentinel__";
     [super dealloc];
 }
 
+- (HLDeferredList *) cancelDeferredsWhenCancelled
+{
+	cancelDeferredsWhenCancelled_ = YES;
+	return self;
+}
+
 - (void) cancel
 {
-    for (HLDeferred *d in deferreds_) {
-        [d cancel];
-    }
-    [deferreds_ release]; deferreds_ = [[NSArray array] copy];
-    [results_ removeAllObjects];
-    finishedCount_ = 0;
+	[super cancel];
+	if (cancelDeferredsWhenCancelled_) {
+		[deferreds_ makeObjectsPerformSelector: @selector(cancel)];
+	}
 }
 
 @end
