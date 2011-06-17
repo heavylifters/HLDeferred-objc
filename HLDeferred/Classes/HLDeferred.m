@@ -94,7 +94,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
                                  reason: @"HLDeferred has been finalized"
                                userInfo: nil];
     } else {
-        NSMutableDictionary *link = [[NSMutableDictionary alloc] initWithCapacity: 3];
+        NSMutableDictionary *link = [[NSMutableDictionary alloc] initWithCapacity: 2];
         cb = [cb copy];
         eb = [eb copy];
         if (cb) [link setObject: cb forKey: @"t"];
@@ -114,7 +114,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 - (HLDeferred *) failFinally: (FailBlock)aFailFinalizer { return [self thenFinally: nil            failFinally: aFailFinalizer]; }
 - (HLDeferred *) bothFinally: (ThenBlock)aBothFinalizer { return [self thenFinally: aBothFinalizer failFinally: aBothFinalizer]; }
 
-- (HLDeferred *) thenFinally: (ThenBlock)atThenFinalizer failFinally: (FailBlock)aFailFinalizer
+- (HLDeferred *) thenFinally: (ThenBlock)aThenFinalizer failFinally: (FailBlock)aFailFinalizer
 {
     if (finalized_) {
         @throw [NSException exceptionWithName: NSInternalInconsistencyException
@@ -125,13 +125,19 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
                                        reason: @"HLDeferred already has a finalizer"
                                      userInfo: nil];
     } else {
-        finalizer_ = [[NSMutableDictionary alloc] initWithCapacity: 3];
-        atThenFinalizer = [atThenFinalizer copy];
-        aFailFinalizer = [aFailFinalizer copy];
-        if (atThenFinalizer) [finalizer_ setObject: atThenFinalizer forKey: @"t"];
-        if (aFailFinalizer) [finalizer_ setObject: aFailFinalizer forKey: @"f"];
-        [atThenFinalizer release];
-        [aFailFinalizer release];
+        NSMutableDictionary *finalizer = [[NSMutableDictionary alloc] initWithCapacity: 2];
+        if (aThenFinalizer) {
+            aThenFinalizer = [aThenFinalizer copy];
+            [finalizer setObject: aThenFinalizer forKey: @"t"];
+            [aThenFinalizer release];
+        }
+        if (aFailFinalizer) {
+            aFailFinalizer = [aFailFinalizer copy];
+            [finalizer setObject: aFailFinalizer forKey: @"f"];
+            [aFailFinalizer release];
+        }
+        finalizer_ = [[NSDictionary alloc] initWithDictionary: finalizer];
+        [finalizer release];
         if (called_) {
             [self _run];
         }
