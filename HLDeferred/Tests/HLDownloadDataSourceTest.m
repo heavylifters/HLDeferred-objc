@@ -40,11 +40,11 @@ static NSString *path;
 	[ds release]; ds = nil;
 	
 	__block BOOL success = NO;
-	
+	__block id theResult = nil;
+    
 	[d then: ^(id result) {
 		success = YES;
-		GHAssertTrue([result isKindOfClass: [NSString class]], @"expected NSData");
-		GHAssertEqualStrings(result, path, nil);
+        theResult = [result retain];
 		[self notify: kGHUnitWaitStatusSuccess forSelector: @selector(testSimple)];
 		return result;
 	} fail: ^(HLFailure *failure) {
@@ -53,6 +53,9 @@ static NSString *path;
 	}];
 	[self waitForStatus: kGHUnitWaitStatusSuccess timeout: 5.0];
 	GHAssertTrue(success, @"callback didn't run");	
+    GHAssertTrue([theResult isKindOfClass: [NSString class]], @"expected NSData");
+    GHAssertEqualStrings(theResult, path, nil);
+    [theResult release]; theResult = nil;
 }
 
 - (void) testFail
@@ -88,10 +91,11 @@ static NSString *path;
 	[ds release]; ds = nil;
 	
 	__block BOOL success = NO;
-	
+	__block id theResult = nil;
+    
 	[d then: ^(id result) {
 		success = YES;
-		GHAssertNil(result, nil);
+        theResult = [result retain];
 		[self notify: kGHUnitWaitStatusSuccess forSelector: @selector(testNotFound)];
 		return result;
 	} fail: ^(HLFailure *failure) {
@@ -99,7 +103,10 @@ static NSString *path;
 		return failure;
 	}];
 	[self waitForStatus: kGHUnitWaitStatusSuccess timeout: 5.0];
-	GHAssertTrue(success, @"errback didn't run");	
+	GHAssertTrue(success, @"callback didn't run");	
+    GHAssertNil(theResult, nil);
+    [theResult release]; theResult = nil;
+    
 }
 
 @end

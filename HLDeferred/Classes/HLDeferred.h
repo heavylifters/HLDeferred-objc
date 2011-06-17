@@ -31,7 +31,7 @@ typedef id (^FailBlock)(HLFailure *failure);
     NSInteger pauseCount_;
     NSMutableArray *callbacks_;
     id <HLDeferredCancellable> canceller_;
-    ThenBlock finalizer_;
+    NSDictionary *finalizer_;
 }
 
 @property (nonatomic, assign) id <HLDeferredCancellable> canceller;

@@ -45,13 +45,15 @@
 #pragma mark -
 #pragma mark Public API: template methods
 
-- (NSURLRequest *) urlRequest
+- (NSMutableURLRequest *) urlRequest
 {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [self sourceURL]
                                                            cachePolicy: NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval: 240.0];
     [request setHTTPMethod: @"GET"];
     [request setValue: @"gzip" forHTTPHeaderField: @"Accept-Encoding"];
+    NSString *lastModified = [[self context] objectForKey: @"requestIfModifiedSince"];
+    if (lastModified) [request setValue: lastModified forHTTPHeaderField: @"If-Modified-Since"];
     return request;
 }
 
@@ -71,6 +73,7 @@
         if ([[NSFileManager defaultManager] createFileAtPath: [self destinationPath]
                                                     contents: [NSData data]
                                                   attributes: nil]) {
+            [fileHandle_ release];
             fileHandle_ = [[NSFileHandle fileHandleForWritingAtPath: [self destinationPath]] retain];
             return YES;
         }
