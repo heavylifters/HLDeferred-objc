@@ -26,12 +26,13 @@
 - (id) initWithURL: (NSURL *)url;
 - (id) initWithURLString: (NSString *)urlString;
 
+- (NSString *) responseHeaderValueForKey: (NSString *)key;
 - (NSInteger) responseStatusCode;
 
 #pragma mark -
 #pragma mark Public API: template methods, override these to customize behaviour (do NOT call directly)
 
-- (NSURLRequest *) urlRequest;
+- (NSMutableURLRequest *) urlRequest;
 
 - (BOOL) responseBegan;
 - (void) responseReceivedData: (NSData *)data;

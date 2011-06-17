@@ -22,10 +22,11 @@
 	[ds release]; ds = nil;
 	
 	__block BOOL success = NO;
-	
+    __block id theResult = nil;
+
 	[d then: ^(id result) {
 		success = YES;
-		GHAssertTrue([result isKindOfClass: [NSData class]], @"expected NSData");
+        theResult = [result retain];
 		[self notify: kGHUnitWaitStatusSuccess forSelector: @selector(testSimple)];
 		return result;
 	} fail: ^(HLFailure *failure) {
@@ -34,6 +35,8 @@
 	}];
 	[self waitForStatus: kGHUnitWaitStatusSuccess timeout: 5.0];
 	GHAssertTrue(success, @"callback didn't run");	
+    GHAssertTrue([theResult isKindOfClass: [NSData class]], @"expected NSData");
+    [theResult release]; theResult = nil;
 }
 
 - (void) testFail
@@ -66,10 +69,11 @@
 	HLDeferred *d = [ds requestStartOnQueue: [NSOperationQueue mainQueue]];
 	
 	__block BOOL success = NO;
-	
+	__block id theResult = nil;
+    
 	[d then: ^(id result) {
 		success = YES;
-		GHAssertNil(result, nil);
+        theResult = [result retain];
 		[self notify: kGHUnitWaitStatusSuccess forSelector: @selector(testNotFound)];
 		return result;
 	} fail: ^(HLFailure *failure) {
@@ -77,7 +81,9 @@
 		return failure;
 	}];
 	[self waitForStatus: kGHUnitWaitStatusSuccess timeout: 5.0];
-	GHAssertTrue(success, @"errback didn't run");	
+	GHAssertTrue(success, @"callback didn't run");	
+    GHAssertNil(theResult, nil);
+    [theResult release]; theResult = nil;
 	[ds release]; ds = nil;
 }
 

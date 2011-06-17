@@ -49,7 +49,7 @@
 #pragma mark -
 #pragma mark Public API: template methods, override these to customize behaviour
 
-- (NSURLRequest *) urlRequest
+- (NSMutableURLRequest *) urlRequest
 {
     NSMutableURLRequest *result = nil;
     id requestURL = [context_ objectForKey: @"requestURL"];
@@ -68,6 +68,8 @@
         if (requestBody) [result setHTTPBody: requestBody];
         NSString *requestBodyContentType = [context_ objectForKey: @"requestBodyContentType"];
         if (requestBodyContentType) [result setValue: requestBodyContentType forHTTPHeaderField: @"content-type"];
+        NSString *lastModified = [context_ objectForKey: @"requestIfModifiedSince"];
+		if (lastModified) [result setValue: lastModified forHTTPHeaderField: @"If-Modified-Since"];
     }
     return result;
 }
@@ -150,6 +152,15 @@
 
 #pragma mark -
 #pragma mark Public API
+
+- (NSString *) responseHeaderValueForKey: (NSString *)key
+{
+    if ([response_ isKindOfClass: [NSHTTPURLResponse class]]) {
+        NSHTTPURLResponse *r = (NSHTTPURLResponse *)response_;
+        return [[r allHeaderFields] objectForKey: key];
+    }
+    return nil;
+}
 
 - (NSInteger) responseStatusCode
 {
