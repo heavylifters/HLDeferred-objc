@@ -120,7 +120,7 @@
 	[d then: ^(id result) {
 		GHAssertEquals((int)[result count], 1, @"expected one result");
 		GHAssertTrue([[result objectAtIndex: 0] isKindOfClass: [HLFailure class]], @"first result should be HLFailure");
-		GHAssertEqualStrings([[result objectAtIndex: 0] value], @"ok", @"expected first result value not received");
+		GHAssertEqualStrings([(HLFailure *)[result objectAtIndex: 0] value], @"ok", @"expected first result value not received");
 		success = YES;
 		return result;
 	}];
@@ -266,7 +266,7 @@
 		GHAssertTrue([result isKindOfClass: [NSArray class]], @"callback result should be NSArray");
 		GHAssertEquals((int)[result count], 1, @"expected one result");
 		GHAssertTrue([[result objectAtIndex: 0] isKindOfClass: [HLFailure class]], @"callback result first element should be HLFailure");
-		GHAssertEqualStrings([[result objectAtIndex: 0] value], @"ok", @"expected error not received");
+		GHAssertEqualStrings([(HLFailure *)[result objectAtIndex: 0] value], @"ok", @"expected error not received");
 		return result;
 	}];
 	

@@ -207,6 +207,82 @@
 	[c release];
 }
 
+- (void) testFinalizerNoCallbacks
+{
+    HLDeferred *d = [[HLDeferred alloc] init];
+    __block BOOL success = NO;
+
+    [d thenFinally: ^(id result) {
+        GHAssertEqualStrings(result, @"success", @"unexpected callback result");
+        success = YES;
+        return result;
+    }];
+
+    [d takeResult: @"success"];
+    GHAssertTrue(success, @"callback did not run");
+	[d release];
+}
+
+- (void) testFinalizerOneCallback
+{
+    HLDeferred *d = [[HLDeferred alloc] init];
+    NSMutableString *s = [[NSMutableString alloc] init];
+
+    [d thenFinally: ^(id result) {
+        GHAssertEqualStrings(result, @"success", @"unexpected callback result");
+        [s appendString: @"f"];
+        return result;
+    }];
+    [d then: ^(id result) {
+        GHAssertEqualStrings(result, @"success", @"unexpected callback result");
+        [s appendString: @"c"];
+        return result;
+    }];
+    
+    [d takeResult: @"success"];
+    GHAssertTrue([s length] > 0, @"callback did not run");
+    GHAssertEqualStrings(s, @"cf", @"callback should have run, then finalizer");
+    [s release];
+	[d release];
+}
+
+- (void) testTwoFinalizersThrows
+{
+    HLDeferred *d = [[HLDeferred alloc] init];
+    
+    [d thenFinally: ^(id result) {
+        return result;
+    }];
+    
+    void (^shouldThrow)(void) = ^{
+        [d thenFinally: ^(id _) { return _; }];
+    };
+    
+    GHAssertThrows(shouldThrow(), @"should have thrown as there was already a finalizer");
+    
+    [d takeResult: @""];
+	[d release];
+}
+
+- (void) testFinalizerAfterRunThrows
+{
+    HLDeferred *d = [[HLDeferred alloc] init];
+    
+    [d thenFinally: ^(id result) {
+        return result;
+    }];
+
+    [d takeResult: @""];
+    
+    void (^shouldThrow)(void) = ^{
+        [d thenFinally: ^(id _) { return _; }];
+    };
+    
+    GHAssertThrows(shouldThrow(), @"should have thrown as the Deferred already ran");
+    
+	[d release];
+}
+
 @end
 
 @implementation HLDeferredTestCanceller
