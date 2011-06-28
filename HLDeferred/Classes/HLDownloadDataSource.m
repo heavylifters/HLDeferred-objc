@@ -70,6 +70,7 @@
 - (BOOL) responseBegan
 {
     if ([super responseBegan]) {
+        [self setResponseData: nil];
         if ([[NSFileManager defaultManager] createFileAtPath: [self destinationPath]
                                                     contents: [NSData data]
                                                   attributes: nil]) {
