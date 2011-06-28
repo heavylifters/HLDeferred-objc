@@ -10,6 +10,65 @@
 
 NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 
+@interface HLLink : NSObject
+{
+    ThenBlock _thenBlock;
+    FailBlock _failBlock;
+    id _result;
+}
+
+@property (nonatomic, copy) ThenBlock thenBlock;
+@property (nonatomic, copy) FailBlock failBlock;
+@property (nonatomic, retain) id result;
+
+- (id) initWithThenBlock: (ThenBlock)cb_ failBlock: (FailBlock)fb_;
+
+- (id) process: (id)input;
+
+@end
+
+@implementation HLLink
+
+@synthesize thenBlock=_thenBlock;
+@synthesize failBlock=_failBlock;
+@synthesize result=_result;
+
+- (id) initWithThenBlock: (ThenBlock)thenBlock_ failBlock: (FailBlock)failBlock_
+{
+    self = [super init];
+    if (self) {
+        _thenBlock = [thenBlock_ copy];
+        _failBlock = [failBlock_ copy];
+    }
+    return self;
+}
+
+- (void) dealloc
+{
+    [_thenBlock release]; _thenBlock = nil;
+    [_failBlock release]; _failBlock = nil;
+    [super dealloc];
+}
+
+- (id) process: (id)input
+{
+    id result = input;
+    if ([input isKindOfClass: [HLFailure class]]) {
+        FailBlock fb = [self failBlock];
+        if (fb) {
+            result = fb((HLFailure *)input);
+        }
+    } else {
+        ThenBlock tb = [self thenBlock];
+        if (tb) {
+            result = tb(input);
+        }
+    }
+    return result;
+}
+
+@end
+
 @interface HLDeferred ()
 
 @property (nonatomic, retain) id result;
@@ -40,7 +99,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
         pauseCount_ = 0;
         finalized_ = NO;
         finalizer_ = nil;
-        callbacks_ = [[NSMutableArray alloc] init];
+        chain_ = [[NSMutableArray alloc] init];
         canceller_ = theCanceller;
 	}
     return self;
@@ -57,7 +116,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
     canceller_ = nil;
     [result_ release]; result_ = nil;
     [finalizer_ release];
-    [callbacks_ release]; callbacks_ = nil;
+    [chain_ release]; chain_ = nil;
     
     [super dealloc];
 }
@@ -94,15 +153,9 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
                                  reason: @"HLDeferred has been finalized"
                                userInfo: nil];
     } else {
-        NSMutableDictionary *link = [[NSMutableDictionary alloc] initWithCapacity: 2];
-        cb = [cb copy];
-        eb = [eb copy];
-        if (cb) [link setObject: cb forKey: @"t"];
-        if (eb) [link setObject: eb forKey: @"f"];
-        [callbacks_ addObject: link];
-        [cb release];
-        [eb release];
-        [link release];
+        HLLink *link = [[HLLink alloc] initWithThenBlock: cb failBlock: eb];
+        [chain_ addObject: link];
+        [link release]; link = nil;
         if (called_) {
             [self _run];
         }
@@ -125,19 +178,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
                                        reason: @"HLDeferred already has a finalizer"
                                      userInfo: nil];
     } else {
-        NSMutableDictionary *finalizer = [[NSMutableDictionary alloc] initWithCapacity: 2];
-        if (aThenFinalizer) {
-            aThenFinalizer = [aThenFinalizer copy];
-            [finalizer setObject: aThenFinalizer forKey: @"t"];
-            [aThenFinalizer release];
-        }
-        if (aFailFinalizer) {
-            aFailFinalizer = [aFailFinalizer copy];
-            [finalizer setObject: aFailFinalizer forKey: @"f"];
-            [aFailFinalizer release];
-        }
-        finalizer_ = [[NSDictionary alloc] initWithDictionary: finalizer];
-        [finalizer release];
+        finalizer_ = [[HLLink alloc] initWithThenBlock: aThenFinalizer failBlock: aFailFinalizer];
         if (called_) {
             [self _run];
         }
@@ -216,31 +257,20 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
     if (running_) return;
     if (pauseCount_ == 0) {
         // NSLog(@"%@ in %@, not paused", self, NSStringFromSelector(_cmd));
-        NSDictionary *link;
-        while ([callbacks_ count] > 0) {
+        HLLink *link = nil;
+        while ([chain_ count] > 0) {
             // NSLog(@"%@ in %@, running callback", self, NSStringFromSelector(_cmd));
             @try {
-                link = [[callbacks_ objectAtIndex: 0] retain];
-                [callbacks_ removeObjectAtIndex: 0];
+                link = [[chain_ objectAtIndex: 0] retain];
+                [chain_ removeObjectAtIndex: 0];
                 running_ = YES;
                 @try {
-                    if ([result_ isKindOfClass: [HLFailure class]]) {
-                        FailBlock failBlock = [link objectForKey: @"f"];
-                        // NSLog(@"%@ in %@, calling failBlock", self, NSStringFromSelector(_cmd));
-                        // NSLog(@"HLDeferred: calling errback, result: '%@'", result_);
-                        [self setResult: failBlock ? failBlock((HLFailure *)result_) : result_];
-                    } else {
-                        ThenBlock thenBlock = [link objectForKey: @"t"];
-                        // NSLog(@"%@ in %@, calling thenBlock", self, NSStringFromSelector(_cmd));
-                        [self setResult: thenBlock ? thenBlock(result_) : result_];
-                    }
+                    [self setResult: [link process: result_]];
                 } @finally {
-                    // NSLog(@"%@ in %@, running=NO", self, NSStringFromSelector(_cmd));
                     running_ = NO;
                 }
                 if ([result_ isKindOfClass: [HLDeferred class]]) {
                     // NSLog(@"%@ in %@, result is HLDeferred, pausing", self, NSStringFromSelector(_cmd));
-                    // CPLog("callback result is another HLDeferred, pausing: " + self);
                     [self pause];
                     [result_ then: ^(id result) { return [self _continue: result]; }
                              fail: ^(HLFailure *failure) { return [self _continue: failure]; }];
@@ -250,11 +280,11 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
                 // NSLog(@"%@ in %@, caught exception: %@", self, NSStringFromSelector(_cmd), e);
 				[self setResult: [HLFailure wrap: e]];
             } @finally {
-                [link release];
+                [link release]; link = nil;
             }
         }
         if (finalizer_ && (pauseCount_ == 0)) {
-            [callbacks_ addObject: finalizer_];
+            [chain_ addObject: finalizer_];
             [finalizer_ release]; finalizer_ = nil;
             finalized_ = YES;
             [self _run];

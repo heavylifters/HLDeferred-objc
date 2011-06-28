@@ -29,7 +29,7 @@ typedef id (^FailBlock)(HLFailure *failure);
     BOOL running_;
     id result_;
     NSInteger pauseCount_;
-    NSMutableArray *callbacks_;
+    NSMutableArray *chain_;
     id <HLDeferredCancellable> canceller_;
     NSDictionary *finalizer_;
 }
