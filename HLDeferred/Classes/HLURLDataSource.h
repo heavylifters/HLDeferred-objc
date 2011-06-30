@@ -29,6 +29,10 @@
 - (NSString *) responseHeaderValueForKey: (NSString *)key;
 - (NSInteger) responseStatusCode;
 
+- (BOOL) entityWasOK;
+- (BOOL) entityWasNotModified;
+- (BOOL) entityWasNotFound;
+
 #pragma mark -
 #pragma mark Public API: template methods, override these to customize behaviour (do NOT call directly)
 

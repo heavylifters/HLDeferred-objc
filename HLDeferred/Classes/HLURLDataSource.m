@@ -172,4 +172,19 @@
     return result;
 }
 
+- (BOOL) entityWasOK
+{
+    return [self responseStatusCode] == 200;
+}
+
+- (BOOL) entityWasNotModified
+{
+    return [self responseStatusCode] == 304;
+}
+
+- (BOOL) entityWasNotFound
+{
+    return [self responseStatusCode] == 404;
+}
+
 @end
