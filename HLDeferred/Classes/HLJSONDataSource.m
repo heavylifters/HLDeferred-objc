@@ -16,8 +16,8 @@
     if ([self responseData]) {
         NSError *error = nil;
         id result = [[self responseData] objectFromJSONDataWithParseOptions: JKParseOptionStrict error: &error];
-        if (!error) {
-            [[self responseData] setLength: 0];
+        if (result) {
+            [self setResponseData: nil];
             [self setResult: result];
             [self asyncCompleteOperationResult];
         } else {
