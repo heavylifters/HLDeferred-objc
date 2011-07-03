@@ -303,7 +303,8 @@
 	HLDeferred *d1 = [[HLDeferred alloc] initWithCanceller: c1];
 	HLDeferred *d2 = [[HLDeferred alloc] initWithCanceller: c2];
 	NSArray *list = [[NSArray alloc] initWithObjects: d1, d2, nil];
-	HLDeferredList *d = [[[HLDeferredList alloc] initWithDeferreds: list] cancelDeferredsWhenCancelled];
+	HLDeferredList *d = [[HLDeferredList alloc] initWithDeferreds: list];
+    [d cancelDeferredsWhenCancelled];
 	GHAssertFalse([c1 succeeded], @"canceller 1 was called prematurely");
 	GHAssertFalse([c2 succeeded], @"canceller 2 was called prematurely");
 
