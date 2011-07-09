@@ -65,7 +65,10 @@
         NSString *requestMethod = [context_ objectForKey: @"requestMethod"];
         [result setHTTPMethod: requestMethod ? requestMethod : @"GET"];
         NSData *requestBody = [context_ objectForKey: @"requestBody"];
-        if (requestBody) [result setHTTPBody: requestBody];
+        if (requestBody) {
+            [result setHTTPBody: requestBody];
+            [result setValue: [NSString stringWithFormat: @"%d", [requestBody length]] forHTTPHeaderField: @"Content-Length"];
+        }
         NSString *requestBodyContentType = [context_ objectForKey: @"requestBodyContentType"];
         if (requestBodyContentType) [result setValue: requestBodyContentType forHTTPHeaderField: @"content-type"];
         NSString *lastModified = [context_ objectForKey: @"requestIfModifiedSince"];
