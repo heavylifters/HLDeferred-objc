@@ -30,6 +30,6 @@
 - (id) initWithDeferreds: (NSArray *)list fireOnFirstError: (BOOL)flFireOnFirstError;
 - (id) initWithDeferreds: (NSArray *)list consumeErrors: (BOOL)flConsumeErrors;
 
-- (HLDeferredList *) cancelDeferredsWhenCancelled;
+- (void) cancelDeferredsWhenCancelled;
 
 @end
