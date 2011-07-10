@@ -309,16 +309,18 @@
 	GHAssertFalse([c2 succeeded], @"canceller 2 was called prematurely");
 
 	__block BOOL success = NO;
-	
+	__block HLFailure *theFailure = nil;
+
 	[d fail: ^(HLFailure *failure) {
+        theFailure = [failure retain];
 		success = YES;
-		GHAssertEquals([failure value], kHLDeferredCancelled, @"errback should have been run with a kHLDeferredCancelled value");
 		return failure;
 	}];
 	
 	GHAssertFalse(success, @"errback run too soon");
 	[d cancel];
 	GHAssertTrue(success, @"errback should have run");
+    GHAssertEquals([[theFailure autorelease] value], kHLDeferredCancelled, @"errback should have been run with a kHLDeferredCancelled value");
 	
 	GHAssertTrue([c1 succeeded], @"canceller 1 was not called");
 	GHAssertTrue([c2 succeeded], @"canceller 2 was not called");
@@ -346,6 +348,7 @@
 - (void) deferredWillCancel: (HLDeferred *)d
 {
 	success = YES;
+    [d takeError: kHLDeferredCancelled];
 }
 
 - (BOOL) succeeded

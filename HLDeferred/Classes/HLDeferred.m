@@ -171,7 +171,9 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 		} else {
 			suppressAlreadyCalled_ = YES;
 		}
-		if (! called_) {
+		if ( (! called_) && (canceller_ == nil) ) {
+            // if there is a canceller, the canceller
+            // must call [d takeError: kHLDeferredCancelled]
 			[self takeError: kHLDeferredCancelled];
 		}
 	} else if ([result_ isKindOfClass: [HLDeferred class]]) {
