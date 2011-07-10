@@ -12,12 +12,22 @@
 {
     BOOL executing_;
     BOOL finished_;
+
+    NSThread *runLoopThread_;
+    NSSet *runLoopModes_;
 }
+
+@property (retain) NSThread *runLoopThread; // default is nil, implying main thread
+@property (copy)   NSSet *runLoopModes; // default is nil, implying set containing NSDefaultRunLoopMode
 
 #pragma mark -
 #pragma mark Template methods for subclasses
 
-// -main will run on the main thread via dispatch_async
+// called on the runLoopThread
 - (void) execute;
+
+// if you override this, you MUST call super
+// called on the runLoopThread
+- (void) cancelOnRunLoopThread;
 
 @end

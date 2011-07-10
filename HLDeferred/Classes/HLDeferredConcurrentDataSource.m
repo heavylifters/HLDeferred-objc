@@ -10,6 +10,9 @@
 
 @implementation HLDeferredConcurrentDataSource
 
+@synthesize runLoopThread=runLoopThread_;
+@synthesize runLoopModes=runLoopModes_;
+
 - (id) init
 {
     self = [super init];
@@ -20,17 +23,41 @@
     return self;
 }
 
-// override this method to perform work
-- (void) execute
+- (void) dealloc
 {
-	[super execute];
+    [runLoopThread_ release]; runLoopThread_ = nil;
+    [runLoopModes_ release]; runLoopModes_ = nil;
+    [super dealloc];
+}
+
+- (NSThread *) actualRunLoopThread
+{
+    NSThread *result = [self runLoopThread];
+    if (result == nil) result = [NSThread mainThread];
+    return result;
+}
+
+- (BOOL) isActualRunLoopThread
+{
+    return [[NSThread currentThread] isEqual: [self actualRunLoopThread]];
+}
+
+- (NSSet *) actualRunLoopModes
+{
+    NSSet * result = [self runLoopModes];
+    if ( (result == nil) || ([result count] == 0) ) {
+        result = [NSSet setWithObject: NSDefaultRunLoopMode];
+    }
+    return result;
 }
 
 #pragma mark -
 #pragma mark HLDeferred support
 
+// called on the callingThread
 - (void) markOperationCompleted
 {
+    assert([self isActualCallingThread]);
     [self willChangeValueForKey: @"isFinished"];
     [self willChangeValueForKey: @"isExecuting"];
     
@@ -50,6 +77,7 @@
 
 // DO NOT OVERRIDE THIS METHOD
 // override -execute instead
+// called on the queue's thread
 - (void) start
 {
     if ([self isCancelled]) {
@@ -63,41 +91,61 @@
 
 // DO NOT OVERRIDE THIS METHOD
 // override -execute instead
+// called on the queue's thread
 - (void) main
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self willChangeValueForKey: @"isExecuting"];
-		NSException *thrown = nil;
-		@try {
-			[self execute];
-		} @catch (NSException *e) {
-			thrown = e;
-		}
-		executing_ = YES;
-        [self didChangeValueForKey: @"isExecuting"];
-		// this is down here after didChangeValueForKey because
-		// we don't want to call asyncCompleteOperationError
-		// before didChangeValueForKey, because
-		// asyncCompleteOperationError calls markOperationCompleted
-		// which does its own will/didChangeValueForKey for isExecuting
-		if (thrown) {
-			[self setError: thrown];
-			[self asyncCompleteOperationError];
-		}
-    });
+    [self willChangeValueForKey: @"isExecuting"];
+    executing_ = YES;
+    [self didChangeValueForKey: @"isExecuting"];
+    
+    [self performSelector: @selector(executeOnRunLoopThread)
+                 onThread: [self actualRunLoopThread]
+               withObject: nil
+            waitUntilDone: NO
+                    modes: [[self actualRunLoopModes] allObjects]];
 }
 
-- (void) deferredWillCancel: (HLDeferred *)d
+- (void) executeOnRunLoopThread
 {
-    [self willChangeValueForKey: @"isFinished"];
-    [self willChangeValueForKey: @"isExecuting"];
-    
-    executing_ = NO;
-    finished_ = YES;
-    
-    [self didChangeValueForKey: @"isExecuting"];
-    [self didChangeValueForKey: @"isFinished"];
-    [super deferredWillCancel: d];
+    assert([self isActualRunLoopThread]);
+    NSException *thrown = nil;
+    @try {
+        [self execute];
+    } @catch (NSException *e) {
+        thrown = e;
+    }
+    if (thrown) {
+        [self setError: thrown];
+        [self asyncCompleteOperationError];
+    }
+}
+
+// override this method to perform work
+// called on the queue's thread
+- (void) execute
+{
+	[super execute];
+}
+
+#pragma mark -
+#pragma mark HLDeferred support
+
+// NO NOT OVERRIDE THIS
+// override cancelOnRunLoopThread instead
+- (void) cancel
+{
+    // THIS IS SYNCHRONOUS
+    [self performSelector: @selector(cancelOnRunLoopThread)
+                 onThread: [self actualRunLoopThread]
+               withObject: nil
+            waitUntilDone: YES // <--- SYNCHRONOUS
+                    modes: [[self actualRunLoopModes] allObjects]];
+}
+
+- (void) cancelOnRunLoopThread
+{
+    assert([self isActualRunLoopThread]);
+    [super cancel];
 }
 
 @end

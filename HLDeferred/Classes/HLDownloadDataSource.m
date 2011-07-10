@@ -101,14 +101,14 @@
 #pragma mark -
 #pragma mark NSOperation support
 
-- (void) deferredWillCancel: (HLDeferred *)d
+- (void) cancelOnRunLoopThread
 {
     if (fileHandle_) {
         [fileHandle_ release]; fileHandle_ = nil;
         [[NSFileManager defaultManager] removeItemAtPath: [self destinationPath]
                                                    error: NULL];
     }
-    [super deferredWillCancel: d];
+    [super cancelOnRunLoopThread];
 }
 
 @end

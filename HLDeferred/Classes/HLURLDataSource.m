@@ -84,10 +84,10 @@
                                             delegate: self];
 }
 
-- (void) deferredWillCancel: (HLDeferred *)d
+- (void) cancelOnRunLoopThread
 {
     [conn_ cancel];
-    [super deferredWillCancel: d];
+    [super cancelOnRunLoopThread];
 }
 
 - (void) responseFailed

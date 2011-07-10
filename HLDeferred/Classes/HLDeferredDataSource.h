@@ -19,10 +19,20 @@
     id error_;
     id result_;
     HLDeferred *deferred_;  
+    NSThread *callingThread_;
 }
 
-@property (nonatomic, retain) id result;
-@property (nonatomic, retain) id error;
+// the deferred will receive its result on this thread
+// the thread must be running its run loop
+// it will be set to [NSThread currentThread] when
+// -requestStartOnQueue: is called, iff it is nil.
+@property (retain) NSThread *callingThread;
+
+@property (retain) id result;
+@property (retain) id error;
+
+- (NSThread *) actualCallingThread;
+- (BOOL) isActualCallingThread;
 
 #pragma mark -
 #pragma mark HLDeferred support
@@ -57,12 +67,6 @@
 // - call -setError: then -asyncCompleteOperationError
 // DO NOT CALL THIS YOURSELF
 - (void) execute;
-
-// Override this to cancel the task started by execute
-// DO NOT CALL THIS YOURSELF except to call super, which
-// you MUST do at the end of your implementation if you
-// override this
-- (void) deferredWillCancel: (HLDeferred *)d;
 
 // Optionally override this
 // Called after the HLDeferred's callback chain has run.
