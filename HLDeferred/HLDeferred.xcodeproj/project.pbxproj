@@ -9,10 +9,13 @@
 /* Begin PBXBuildFile section */
 		381BBA5313186C330098D5B6 /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 381BBA5113186C330098D5B6 /* JSONKit.h */; };
 		381BBA5413186C330098D5B6 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 381BBA5213186C330098D5B6 /* JSONKit.m */; };
+		386E781413D6201100F32E7A /* HLDeferredDataSourceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 386E781213D6201100F32E7A /* HLDeferredDataSourceManager.h */; };
+		386E781513D6201100F32E7A /* HLDeferredDataSourceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 386E781313D6201100F32E7A /* HLDeferredDataSourceManager.m */; };
 		388531B51300795D00A256DB /* HLDownloadDataSourceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 388531B41300795D00A256DB /* HLDownloadDataSourceTest.m */; };
 		388531E013007DAD00A256DB /* HLJSONDataSourceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 388531DF13007DAD00A256DB /* HLJSONDataSourceTest.m */; };
 		3885A63412FBC56900BA5864 /* HLDeferredDataSourceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3885A63312FBC56900BA5864 /* HLDeferredDataSourceTest.m */; };
 		3885A67912FC783000BA5864 /* HLDeferredConcurrentDataSourceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3885A67812FC783000BA5864 /* HLDeferredConcurrentDataSourceTest.m */; };
+		3891B76B13D65ED100E5F1C0 /* HLDeferredDataSourceManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3891B76A13D65ED100E5F1C0 /* HLDeferredDataSourceManagerTest.m */; };
 		38CB29B312FDF0BD00739549 /* HLURLDataSourceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 38CB29B212FDF0BD00739549 /* HLURLDataSourceTest.m */; };
 		A7171D8112F8BBC800FF92BB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7171D8012F8BBC800FF92BB /* CoreGraphics.framework */; };
 		A7171D8212F8BBC800FF92BB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
@@ -55,10 +58,13 @@
 /* Begin PBXFileReference section */
 		381BBA5113186C330098D5B6 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = Classes/JSONKit.h; sourceTree = "<group>"; };
 		381BBA5213186C330098D5B6 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
+		386E781213D6201100F32E7A /* HLDeferredDataSourceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HLDeferredDataSourceManager.h; path = Classes/HLDeferredDataSourceManager.h; sourceTree = "<group>"; };
+		386E781313D6201100F32E7A /* HLDeferredDataSourceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HLDeferredDataSourceManager.m; sourceTree = "<group>"; };
 		388531B41300795D00A256DB /* HLDownloadDataSourceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HLDownloadDataSourceTest.m; path = Tests/HLDownloadDataSourceTest.m; sourceTree = "<group>"; };
 		388531DF13007DAD00A256DB /* HLJSONDataSourceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HLJSONDataSourceTest.m; path = Tests/HLJSONDataSourceTest.m; sourceTree = "<group>"; };
 		3885A63312FBC56900BA5864 /* HLDeferredDataSourceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HLDeferredDataSourceTest.m; path = Tests/HLDeferredDataSourceTest.m; sourceTree = "<group>"; };
 		3885A67812FC783000BA5864 /* HLDeferredConcurrentDataSourceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HLDeferredConcurrentDataSourceTest.m; path = Tests/HLDeferredConcurrentDataSourceTest.m; sourceTree = "<group>"; };
+		3891B76A13D65ED100E5F1C0 /* HLDeferredDataSourceManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HLDeferredDataSourceManagerTest.m; sourceTree = "<group>"; };
 		38CB29B212FDF0BD00739549 /* HLURLDataSourceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HLURLDataSourceTest.m; path = Tests/HLURLDataSourceTest.m; sourceTree = "<group>"; };
 		A7171D5D12F8BB7C00FF92BB /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnitIOS.framework; path = Frameworks/GHUnitIOS.framework; sourceTree = "<group>"; };
 		A7171D7A12F8BBA700FF92BB /* Tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tests.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -161,6 +167,7 @@
 				A79B87F812F9DC610048464F /* Data Sources */,
 				A72B196412F77215007685CF /* HLDeferred.m */,
 				A757910312FB7C4C00D52C21 /* HLDeferredList.m */,
+				386E781313D6201100F32E7A /* HLDeferredDataSourceManager.m */,
 				A72B196C12F77215007685CF /* HLDeferredDataSource.m */,
 				A72B196612F77215007685CF /* HLDeferredConcurrentDataSource.m */,
 				A7578F0412FB2E4300D52C21 /* HLFailure.m */,
@@ -177,6 +184,7 @@
 				A76B841612F8BD2200ACDD85 /* GHUnitIOSTestMain.m */,
 				A76B842B12F8BE8000ACDD85 /* HLDeferredTest.m */,
 				A75790ED12FB7B3500D52C21 /* HLDeferredListTest.m */,
+				3891B76A13D65ED100E5F1C0 /* HLDeferredDataSourceManagerTest.m */,
 				3885A63312FBC56900BA5864 /* HLDeferredDataSourceTest.m */,
 				3885A67812FC783000BA5864 /* HLDeferredConcurrentDataSourceTest.m */,
 				38CB29B212FDF0BD00739549 /* HLURLDataSourceTest.m */,
@@ -204,6 +212,7 @@
 				A72B196D12F77215007685CF /* HLURLDataSource.h */,
 				A72B196312F77215007685CF /* HLDeferred.h */,
 				A757910512FB7C5A00D52C21 /* HLDeferredList.h */,
+				386E781213D6201100F32E7A /* HLDeferredDataSourceManager.h */,
 				A72B196B12F77215007685CF /* HLDeferredDataSource.h */,
 				A72B196512F77215007685CF /* HLDeferredConcurrentDataSource.h */,
 				A7578F0312FB2E4300D52C21 /* HLFailure.h */,
@@ -229,6 +238,7 @@
 				A7578F0512FB2E4300D52C21 /* HLFailure.h in Headers */,
 				A757910612FB7C7400D52C21 /* HLDeferredList.h in Headers */,
 				381BBA5313186C330098D5B6 /* JSONKit.h in Headers */,
+				386E781413D6201100F32E7A /* HLDeferredDataSourceManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,6 +329,7 @@
 				38CB29B312FDF0BD00739549 /* HLURLDataSourceTest.m in Sources */,
 				388531B51300795D00A256DB /* HLDownloadDataSourceTest.m in Sources */,
 				388531E013007DAD00A256DB /* HLJSONDataSourceTest.m in Sources */,
+				3891B76B13D65ED100E5F1C0 /* HLDeferredDataSourceManagerTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,6 +346,7 @@
 				A79B87DD12F9DC410048464F /* HLJSONDataSource.m in Sources */,
 				A7578F0612FB2E4300D52C21 /* HLFailure.m in Sources */,
 				381BBA5413186C330098D5B6 /* JSONKit.m in Sources */,
+				386E781513D6201100F32E7A /* HLDeferredDataSourceManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

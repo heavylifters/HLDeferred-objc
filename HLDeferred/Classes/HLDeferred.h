@@ -12,6 +12,7 @@ extern NSString * const kHLDeferredCancelled;
 
 typedef id (^ThenBlock)(id result);
 typedef id (^FailBlock)(HLFailure *failure);
+typedef void (^HLVoidBlock)(void);
 
 @class HLDeferred;
 
