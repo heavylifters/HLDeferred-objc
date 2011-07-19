@@ -41,6 +41,7 @@
 	[self waitForStatus: kGHUnitWaitStatusSuccess timeout: 5.0];
 	GHAssertTrue([ds succeeded], @"concurrent data source wasn't executed");
 	GHAssertTrue(success, @"callback didn't run");
+    [ds release]; ds = nil;
 }
 
 @end
