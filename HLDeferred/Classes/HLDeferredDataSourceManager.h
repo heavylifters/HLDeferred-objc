@@ -23,6 +23,11 @@
 // you may only access this on the main thread
 @property (nonatomic, readonly, assign) BOOL networkInUse;
 
+// you may only call this on the main thread
+- (void) incrementRunningNetworkTransferCount;
+// you may only call this on the main thread
+- (void) decrementRunningNetworkTransferCount;
+
 - (id) initWithRunLoopThreadName: (NSString *)name;
 
 - (HLDeferred *) requestStartNetworkTransferDataSource: (HLDeferredDataSource *)ds;
