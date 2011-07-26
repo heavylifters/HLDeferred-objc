@@ -33,6 +33,7 @@
 
 + (HLFailure *) wrap: (id)v
 {
+	if ([v isKindOfClass: [HLFailure class]]) return v;
 	return [[[[self class] alloc] initWithValue: v] autorelease];
 }
 
