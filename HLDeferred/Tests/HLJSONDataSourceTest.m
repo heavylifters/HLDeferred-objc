@@ -32,23 +32,26 @@
 {
 	[self prepare];
 	
-	HLJSONDataSource *ds = [[HLJSONDataSource alloc] initWithURLString: @"http://api.twitter.com/1/statuses/public_timeline.json"];
+	HLJSONDataSource *ds = [[HLJSONDataSource alloc] initWithURLString: @"http://graph.facebook.com/19292868552"];
 	HLDeferred *d = [ds requestStartOnQueue: [NSOperationQueue mainQueue]];
 	[ds release]; ds = nil;
 	
 	__block BOOL success = NO;
-	
+	__block id theResult = nil;
 	[d then: ^(id result) {
 		success = YES;
-		GHAssertTrue([result isKindOfClass: [NSArray class]], @"expected NSArray");
+        theResult = [result retain];
 		[self notify: kGHUnitWaitStatusSuccess forSelector: @selector(testSimple)];
 		return result;
 	} fail: ^(HLFailure *failure) {
 		[self notify: kGHUnitWaitStatusFailure forSelector: @selector(testSimple)];
 		return failure;
 	}];
-	[self waitForStatus: kGHUnitWaitStatusSuccess timeout: 5.0];
+	[self waitForStatus: kGHUnitWaitStatusSuccess timeout: 10.0];
 	GHAssertTrue(success, @"callback didn't run");	
+    GHAssertNotNil(theResult, nil);
+    GHAssertTrue([theResult isKindOfClass: [NSDictionary class]], @"theResult is a %@, not NSDictionary", NSStringFromClass([theResult class]));
+    [theResult release];
 }
 
 - (void) testFail
