@@ -115,7 +115,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 {
     canceller_ = nil;
     [result_ release]; result_ = nil;
-    [finalizer_ release];
+    [finalizer_ release]; finalizer_ = nil;
     [chain_ release]; chain_ = nil;
     
     [super dealloc];

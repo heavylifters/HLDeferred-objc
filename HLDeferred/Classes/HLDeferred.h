@@ -15,6 +15,7 @@ typedef id (^FailBlock)(HLFailure *failure);
 typedef void (^HLVoidBlock)(void);
 
 @class HLDeferred;
+@class HLLink;
 
 @protocol HLDeferredCancellable <NSObject>
 
@@ -32,7 +33,7 @@ typedef void (^HLVoidBlock)(void);
     NSInteger pauseCount_;
     NSMutableArray *chain_;
     id <HLDeferredCancellable> canceller_;
-    NSDictionary *finalizer_;
+    HLLink *finalizer_;
 }
 
 @property (nonatomic, assign) id <HLDeferredCancellable> canceller;
