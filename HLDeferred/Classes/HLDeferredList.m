@@ -37,7 +37,7 @@ NSString * const kHLDeferredListNilSentinel = @"__HLDeferredListNilSentinel__";
         }
         
         [deferreds_ enumerateObjectsUsingBlock: ^(id obj, NSUInteger idx, BOOL *stop) {
-            __block ThenBlock deferredCallback = ^(id result) {
+            __unsafe_unretained ThenBlock deferredCallback = ^(id result) {
                 if ([result isKindOfClass: [HLDeferred class]]) {
                     [result both: deferredCallback];
                     return result;

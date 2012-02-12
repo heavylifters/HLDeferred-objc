@@ -128,7 +128,6 @@
 
 - (HLDeferred *) requestStartNetworkTransferDataSource: (HLDeferredDataSource *)ds
 {
-    __unsafe_unretained HLDeferredDataSourceManager *blockSelf = self;
     if ([ds respondsToSelector: @selector(setRunLoopThread:)]) {
         // this is a concurrent data source, give it a runLoopThread
         // this keeps network processing off the main thread which
@@ -139,6 +138,7 @@
     [self performSelectorOnMainThread: @selector(incrementRunningNetworkTransferCount)
                            withObject: nil
                         waitUntilDone: NO];
+    __unsafe_unretained HLDeferredDataSourceManager *blockSelf = self;
     result = [result both: ^(id result) {
         [blockSelf performSelectorOnMainThread: @selector(decrementRunningNetworkTransferCount)
                                     withObject: nil
