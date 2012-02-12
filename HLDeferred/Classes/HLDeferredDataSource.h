@@ -26,10 +26,10 @@
 // the thread must be running its run loop
 // it will be set to [NSThread currentThread] when
 // -requestStartOnQueue: is called, iff it is nil.
-@property (retain) NSThread *callingThread;
+@property (strong) NSThread *callingThread;
 
-@property (retain) id result;
-@property (retain) id error;
+@property (strong) id result;
+@property (strong) id error;
 
 - (NSThread *) actualCallingThread;
 - (BOOL) isActualCallingThread;

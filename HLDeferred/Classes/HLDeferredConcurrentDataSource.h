@@ -17,7 +17,7 @@
     NSSet *runLoopModes_;
 }
 
-@property (retain) NSThread *runLoopThread; // default is nil, implying main thread
+@property (strong) NSThread *runLoopThread; // default is nil, implying main thread
 @property (copy)   NSSet *runLoopModes; // default is nil, implying set containing NSDefaultRunLoopMode
 
 #pragma mark -

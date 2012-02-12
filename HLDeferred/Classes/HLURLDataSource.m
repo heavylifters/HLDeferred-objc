@@ -16,10 +16,10 @@
 + (HLURLDataSource *) postToURL: (NSURL *)url
                        withBody: (NSString *)body
 {
-    return [[[HLURLDataSource alloc] initWithContext: [NSDictionary dictionaryWithObjectsAndKeys:
+    return [[HLURLDataSource alloc] initWithContext: [NSDictionary dictionaryWithObjectsAndKeys:
                                                        @"POST", @"requestMethod",
                                                        url, @"requestURL",
-                                                       body, @"requestBody", nil]] autorelease];
+                                                       body, @"requestBody", nil]];
 }
 
 - (id) initWithContext: (NSDictionary *)aContext
@@ -29,7 +29,7 @@
         conn_ = nil;
         response_ = nil;
         responseData_ = nil;
-        context_ = [aContext retain];
+        context_ = aContext;
     }
     return self;
 }
@@ -48,11 +48,8 @@
 
 - (void) dealloc
 {
-    [conn_ release]; conn_ = nil;
-    [response_ release]; response_ = nil;
-    [responseData_ release]; responseData_ = nil;
-    [context_ release]; context_ = nil;
-    [super dealloc];
+     conn_ = nil;
+     response_ = nil;
 }
 
 #pragma mark -
@@ -88,7 +85,6 @@
 
 - (void) execute
 {
-	[conn_ release];
     conn_ = [[NSURLConnection alloc] initWithRequest: [self urlRequest]
                                             delegate: self];
 }
@@ -111,12 +107,10 @@
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response_;
 		NSInteger statusCode = [httpResponse statusCode];
         if ((statusCode >= 200) && (statusCode < 300)) {
-			[responseData_ release];
             responseData_ = [[NSMutableData alloc] init]; // YAY!
             result = YES;
         }
     } else {
-		[responseData_ release];
         responseData_ = [[NSMutableData alloc] init]; // YAY!
         result = YES;
     }
@@ -146,8 +140,7 @@
 
 - (void) connection: (NSURLConnection *)connection didReceiveResponse: (NSURLResponse *)aResponse
 {
-	[response_ release];
-    response_ = [aResponse retain];
+    response_ = aResponse;
     [self responseBegan];
 }
 

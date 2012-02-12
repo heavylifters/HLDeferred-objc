@@ -23,12 +23,6 @@
     return self;
 }
 
-- (void) dealloc
-{
-    [runLoopThread_ release]; runLoopThread_ = nil;
-    [runLoopModes_ release]; runLoopModes_ = nil;
-    [super dealloc];
-}
 
 - (NSThread *) actualRunLoopThread
 {

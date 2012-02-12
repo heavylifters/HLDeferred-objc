@@ -19,7 +19,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 
 @property (nonatomic, copy) ThenBlock thenBlock;
 @property (nonatomic, copy) FailBlock failBlock;
-@property (nonatomic, retain) id result;
+@property (nonatomic, strong) id result;
 
 - (id) initWithThenBlock: (ThenBlock)cb_ failBlock: (FailBlock)fb_;
 
@@ -45,9 +45,8 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 
 - (void) dealloc
 {
-    [_thenBlock release]; _thenBlock = nil;
-    [_failBlock release]; _failBlock = nil;
-    [super dealloc];
+     _thenBlock = nil;
+     _failBlock = nil;
 }
 
 - (id) process: (id)input
@@ -71,7 +70,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 
 @interface HLDeferred ()
 
-@property (nonatomic, retain) id result;
+@property (nonatomic, strong) id result;
 
 - (id) _continue: (id)newResult;
 - (void) _run;
@@ -85,8 +84,8 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 @synthesize canceller=canceller_;
 @synthesize called=called_;
 
-+ (HLDeferred *) deferredWithResult: (id)aResult { return [[[[self alloc] init] autorelease] takeResult: aResult]; }
-+ (HLDeferred *) deferredWithError:  (id)anError { return [[[[self alloc] init] autorelease] takeError:  anError]; }
++ (HLDeferred *) deferredWithResult: (id)aResult { return [[[self alloc] init] takeResult: aResult]; }
++ (HLDeferred *) deferredWithError:  (id)anError { return [[[self alloc] init] takeError:  anError]; }
 
 - (id) initWithCanceller: (id <HLDeferredCancellable>) theCanceller
 {
@@ -114,11 +113,9 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 - (void) dealloc
 {
     canceller_ = nil;
-    [result_ release]; result_ = nil;
-    [finalizer_ release]; finalizer_ = nil;
-    [chain_ release]; chain_ = nil;
+     finalizer_ = nil;
+     chain_ = nil;
     
-    [super dealloc];
 }
 
 - (void) pause
@@ -155,7 +152,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
     } else {
         HLLink *link = [[HLLink alloc] initWithThenBlock: cb failBlock: eb];
         [chain_ addObject: link];
-        [link release]; link = nil;
+         link = nil;
         if (called_) {
             [self _run];
         }
@@ -198,7 +195,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
     // NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
     id err = anError;
     if (![err isKindOfClass: [HLFailure class]]) {
-		err = [[[HLFailure alloc] initWithValue: anError] autorelease];
+		err = [[HLFailure alloc] initWithValue: anError];
     }
     [self _startRun: err];
     return self;
@@ -261,7 +258,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
         while ([chain_ count] > 0) {
             // NSLog(@"%@ in %@, running callback", self, NSStringFromSelector(_cmd));
             @try {
-                link = [[chain_ objectAtIndex: 0] retain];
+                link = [chain_ objectAtIndex: 0];
                 [chain_ removeObjectAtIndex: 0];
                 running_ = YES;
                 @try {
@@ -280,12 +277,12 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
                 // NSLog(@"%@ in %@, caught exception: %@", self, NSStringFromSelector(_cmd), e);
 				[self setResult: [HLFailure wrap: e]];
             } @finally {
-                [link release]; link = nil;
+                link = nil; link = nil;
             }
         }
         if (finalizer_ && (pauseCount_ == 0)) {
             [chain_ addObject: finalizer_];
-            [finalizer_ release]; finalizer_ = nil;
+             finalizer_ = nil;
             finalized_ = YES;
             [self _run];
         }

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		381BBA5313186C330098D5B6 /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 381BBA5113186C330098D5B6 /* JSONKit.h */; };
-		381BBA5413186C330098D5B6 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 381BBA5213186C330098D5B6 /* JSONKit.m */; };
+		381BBA5413186C330098D5B6 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 381BBA5213186C330098D5B6 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		386E781413D6201100F32E7A /* HLDeferredDataSourceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 386E781213D6201100F32E7A /* HLDeferredDataSourceManager.h */; };
 		386E781513D6201100F32E7A /* HLDeferredDataSourceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 386E781313D6201100F32E7A /* HLDeferredDataSourceManager.m */; };
 		388531B51300795D00A256DB /* HLDownloadDataSourceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 388531B41300795D00A256DB /* HLDownloadDataSourceTest.m */; };
@@ -369,6 +369,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /tmp/HLDeferred.dst;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -390,6 +391,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				DSTROOT = /tmp/HLDeferred.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

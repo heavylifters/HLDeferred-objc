@@ -27,12 +27,8 @@
 
 - (void) dealloc
 {
-    [error_ release]; error_ = nil;
-    [result_ release]; result_ = nil;
     [deferred_ setCanceller: nil];
-    [deferred_ release]; deferred_ = nil;
-    [callingThread_ release]; callingThread_ = nil;
-    [super dealloc];
+     deferred_ = nil;
 }
 
 - (NSThread *) actualCallingThread
@@ -57,7 +53,7 @@
             [self setCallingThread: [NSThread currentThread]];
         }
         [queue addOperation: self];
-        return [[deferred_ retain] autorelease];
+        return deferred_;
     }
 }
 
@@ -104,7 +100,7 @@
 - (void) asyncCompleteOperationResultOnCallingThread
 {
     assert([self isActualCallingThread]);
-    [deferred_ takeResult: [[result_ retain] autorelease]];
+    [deferred_ takeResult: result_];
     [self markOperationCompleted];
 }
 
@@ -119,7 +115,7 @@
 - (void) asyncCompleteOperationErrorOnCallingThread
 {
     assert([self isActualCallingThread]);
-    [deferred_ takeError: [[error_ retain] autorelease]];
+    [deferred_ takeError: error_];
     [self markOperationCompleted];
 }
 

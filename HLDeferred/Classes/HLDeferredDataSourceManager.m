@@ -17,8 +17,8 @@
 
 // private properties
 
-@property (nonatomic, readonly, retain ) NSThread *networkRunLoopThread;
-@property (nonatomic, readonly, retain ) NSOperationQueue *queueForNetworkTransfers;
+@property (nonatomic, readonly, strong ) NSThread *networkRunLoopThread;
+@property (nonatomic, readonly, strong ) NSOperationQueue *queueForNetworkTransfers;
 
 @end
 
@@ -65,9 +65,6 @@
     // this cannot run until the _networkRunLoopThread is terminated
     // because it retains self
     [_queueForNetworkTransfers cancelAllOperations];
-    [_queueForNetworkTransfers release]; _queueForNetworkTransfers = nil;
-    [_networkRunLoopThread release]; _networkRunLoopThread = nil;
-    [super dealloc];
 }
 
 - (void) stop: (HLVoidBlock)completion
@@ -81,7 +78,6 @@
                    withObject: nil
                 waitUntilDone: YES];
         completionBlock();
-        [completionBlock release];
     });
 }
 
@@ -96,14 +92,9 @@
 {
     assert( ! [NSThread isMainThread] );
     while (_networkRunLoopThreadContinue) {
-        NSAutoreleasePool * pool;
-
-        pool = [[NSAutoreleasePool alloc] init];
-        assert(pool != nil);
-
-        [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: [NSDate distantFuture]];
-
-        [pool drain];
+        @autoreleasepool {
+            [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: [NSDate distantFuture]];
+        }
     }
 }
 
@@ -137,7 +128,7 @@
 
 - (HLDeferred *) requestStartNetworkTransferDataSource: (HLDeferredDataSource *)ds
 {
-    __block HLDeferredDataSourceManager *blockSelf = self;
+    __unsafe_unretained HLDeferredDataSourceManager *blockSelf = self;
     if ([ds respondsToSelector: @selector(setRunLoopThread:)]) {
         // this is a concurrent data source, give it a runLoopThread
         // this keeps network processing off the main thread which

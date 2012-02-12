@@ -112,9 +112,8 @@ NSString * const kHLDeferredListNilSentinel = @"__HLDeferredListNilSentinel__";
 
 - (void) dealloc
 {
-    [deferreds_ release]; deferreds_ = nil;
-    [results_ release]; results_ = nil;
-    [super dealloc];
+     deferreds_ = nil;
+     results_ = nil;
 }
 
 - (void) cancelDeferredsWhenCancelled

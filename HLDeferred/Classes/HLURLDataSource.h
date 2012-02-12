@@ -16,8 +16,8 @@
     NSDictionary *context_;
 }
 
-@property (nonatomic, retain) NSDictionary *context;
-@property (nonatomic, retain) NSMutableData *responseData;
+@property (nonatomic, strong) NSDictionary *context;
+@property (nonatomic, strong) NSMutableData *responseData;
 
 // designated initializer
 - (id) initWithContext: (NSDictionary *)aContext;

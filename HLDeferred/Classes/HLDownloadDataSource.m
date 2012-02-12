@@ -25,8 +25,7 @@
 
 - (void) dealloc
 {
-    [fileHandle_ release]; fileHandle_ = nil;
-    [super dealloc];
+     fileHandle_ = nil;
 }
 
 #pragma mark -
@@ -74,8 +73,7 @@
         if ([[NSFileManager defaultManager] createFileAtPath: [self destinationPath]
                                                     contents: [NSData data]
                                                   attributes: nil]) {
-            [fileHandle_ release];
-            fileHandle_ = [[NSFileHandle fileHandleForWritingAtPath: [self destinationPath]] retain];
+            fileHandle_ = [NSFileHandle fileHandleForWritingAtPath: [self destinationPath]];
             return YES;
         }
     }
@@ -92,7 +90,7 @@
 - (void) responseFinished
 {
     if (fileHandle_) {
-        [fileHandle_ release]; fileHandle_ = nil;
+         fileHandle_ = nil;
         [self setResult: [self destinationPath]];
     }
 	[super responseFinished];
@@ -104,7 +102,7 @@
 - (void) cancelOnRunLoopThread
 {
     if (fileHandle_) {
-        [fileHandle_ release]; fileHandle_ = nil;
+         fileHandle_ = nil;
         [[NSFileManager defaultManager] removeItemAtPath: [self destinationPath]
                                                    error: NULL];
     }
