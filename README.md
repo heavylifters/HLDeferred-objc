@@ -70,8 +70,6 @@ The Most Basic Example
         NSLog(@"In the console, you should see 'Hello, World' in the line above");
     
         // Note: use [d takeError: @"DISASTER!"] to indicate failure
-    
-        [d release];
     }
 
 Adding callbacks and errbacks
@@ -162,7 +160,7 @@ See the comments in [HLDeferredDataSource.h](https://github.com/heavylifters/HLD
         NSOperation *op = [[HLURLDataSource alloc] initWithURLString: urlString];
         NSOperationQueue *queue = [NSOperationQueue mainQueue];
         HLDeferred *d = [op requestStartOnQueue: queue];
-        [op release];
+        op = nil;
     
         // the "then" block runs if the operation succeeds
         [d then: ^(id result) {
@@ -198,11 +196,9 @@ This effectively builds a dependency tree of [`HLDeferred`][HLD] objects. Using 
 
 ### Quick note about memory management ###
 
-When using a subclass of `HLDeferredDataSource`, memory management is simple; you do not need to explicitly `retain`/`release` the [`HLDeferred`][HLD] provided by `-requestStartOnQueue:`.
-
 The `HLDeferredDataSource` owns the [`HLDeferred`][HLD] object returned by `-requestStartOnQueue:`. Its callback chain will be fired (on the main thread) prior to the operation being marked as complete. When the operation is marked as complete, the queue `release`s it, which in turn `release`s the [`HLDeferred`][HLD] object.
 
-As the NSOperationQueue retains the `HLDeferredDataSource` until it is complete, you can safely `release` the data source object once after calling `-requestStartOneQueue:`.
+As the NSOperationQueue retains the `HLDeferredDataSource` until it is complete, you can safely `release` the data source object after calling `-requestStartOneQueue:`.
 
 ### Assemble a firing squad with HLDeferredList ###
 
@@ -221,7 +217,7 @@ It can optionally fire when the first result is obtained from the list, or when 
             NSOperation *op = [[HLDeferredURLRequestConcurrentOperation alloc] initWithContext: ctx];
             NSOperationQueue *queue = [NSOperationQueue mainQueue];
             HLDeferred *d = [op requestStartOnQueue: queue];
-            [op release];
+            op = nil;
     
             [d then: ^(id result) {
                 NSLog(@"login succeeded");
@@ -257,9 +253,9 @@ It can optionally fire when the first result is obtained from the list, or when 
                     NSDictionary *dict = [[NSDictionary alloc] init];
                     [dict setObject: [result objectAtIndex: 0] forKey: @"stuff1"];
                     [dict setObject: [result objectAtIndex: 1] forKey: @"stuff2"];
-                    return [dict autorelease];
+                    return dict;
                 }];
-                return [ds autorelease];
+                return ds;
             } else {
                 // returning an exception switches the execution of the
                 // callback chain from the "then branch" to the "fail branch"
