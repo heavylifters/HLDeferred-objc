@@ -13,6 +13,15 @@
 @synthesize context=context_;
 @synthesize responseData=responseData_;
 
++ (HLURLDataSource *) postToURL: (NSURL *)url
+                       withBody: (NSString *)body
+{
+    return [[[HLURLDataSource alloc] initWithContext: [NSDictionary dictionaryWithObjectsAndKeys:
+                                                       @"POST", @"requestMethod",
+                                                       url, @"requestURL",
+                                                       body, @"requestBody", nil]] autorelease];
+}
+
 - (id) initWithContext: (NSDictionary *)aContext
 {
     self = [super init];

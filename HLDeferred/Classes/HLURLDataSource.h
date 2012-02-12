@@ -26,6 +26,9 @@
 - (id) initWithURL: (NSURL *)url;
 - (id) initWithURLString: (NSString *)urlString;
 
++ (HLURLDataSource *) postToURL: (NSURL *)url
+                       withBody: (NSString *)body;
+
 - (NSString *) responseHeaderValueForKey: (NSString *)key;
 - (NSInteger) responseStatusCode;
 
