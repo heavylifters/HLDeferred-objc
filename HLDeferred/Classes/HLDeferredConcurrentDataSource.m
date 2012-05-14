@@ -78,6 +78,8 @@
         [self willChangeValueForKey: @"isFinished"];
         finished_ = YES;
         [self didChangeValueForKey: @"isFinished"];
+        [self setError: kHLDeferredCancelled];
+        [self asyncCompleteOperationError];
     } else {
         [self main];
     }
