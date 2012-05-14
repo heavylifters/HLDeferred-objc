@@ -88,6 +88,13 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 + (HLDeferred *) deferredWithResult: (id)aResult { return [[[[self alloc] init] autorelease] takeResult: aResult]; }
 + (HLDeferred *) deferredWithError:  (id)anError { return [[[[self alloc] init] autorelease] takeError:  anError]; }
 
++ (HLDeferred *) deferredObserving: (HLDeferred *)otherDeferred
+{
+    HLDeferred *result = [[[self alloc] init] autorelease];
+    [otherDeferred notify: result];
+    return result;
+}
+
 - (id) initWithCanceller: (id <HLDeferredCancellable>) theCanceller
 {
     self = [super init];
@@ -202,6 +209,22 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
     }
     [self _startRun: err];
     return self;
+}
+
+// this is different than chaining. The result from the other
+// HLDeferred's callback chain will not affect this HLDeferred's result.
+// this is useful if you cache a HLDeferred and don't want its result
+// mutated by its clients. Instead, return a new HLDeferred that is
+// notified by the cached HLDeferred.
+// Also, check out the convenience method: +deferredObserving:
+//
+// return [HLDeferred deferredObserving: _cachedDeferred];
+//
+- (HLDeferred *) notify: (HLDeferred *)otherDeferred
+{
+	// NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
+	return [self then: ^(id result) { [otherDeferred takeResult: result]; return result; }
+                 fail: ^(HLFailure *failure) { [otherDeferred takeError: failure]; return failure; }];
 }
 
 - (void) cancel

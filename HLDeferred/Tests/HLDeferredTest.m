@@ -183,6 +183,47 @@
 	[d2 release];
 }
 
+- (void) testNotifying
+{
+    HLDeferred *d1 = [[HLDeferred alloc] init];
+    HLDeferred *d2 = [[HLDeferred alloc] init];
+	
+	[d1 then: ^(id result) {
+		GHAssertEqualStrings(@"starting", result, nil);
+		return @"d1-result";
+	}];
+    
+    [d1 notify: d2];
+	
+    [d2 then: ^(id result) {
+		GHAssertEqualStrings(@"d1-result", result, nil);
+        return @"d2-result-after-d1-notified-d2";
+    }];
+    
+	[d1 then: ^(id result) {
+		GHAssertEqualStrings(@"d1-result", result, nil);
+		return result;
+	}];
+
+	[d2 then: ^(id result) {
+        GHAssertEqualStrings(@"d2-result-after-d1-notified-d2", result, nil);
+        return result;
+    }];
+    
+	[d1 takeResult: @"starting"];
+    
+    HLDeferred *d3 = [HLDeferred deferredObserving: d2];
+    GHAssertNotNil(d3, nil);
+    
+    [d3 then:^ (id result) {
+        GHAssertEqualStrings(@"d2-result-after-d1-notified-d2", result, nil);
+        return result;
+    }];
+    
+	[d1 release];
+	[d2 release];
+}
+
 - (void) testCancel
 {
 	HLDeferredTestCanceller *c = [[HLDeferredTestCanceller alloc] init];

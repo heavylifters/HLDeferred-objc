@@ -45,6 +45,7 @@ typedef void (^HLVoidBlock)(void);
 
 + (HLDeferred *) deferredWithResult: (id)result;
 + (HLDeferred *) deferredWithError:  (id)error;
++ (HLDeferred *) deferredObserving: (HLDeferred *)otherDeferred;
 
 - (HLDeferred *) then: (ThenBlock)cb;
 - (HLDeferred *) fail: (FailBlock)eb;
@@ -62,6 +63,7 @@ typedef void (^HLVoidBlock)(void);
 
 - (HLDeferred *) takeResult: (id)aResult;
 - (HLDeferred *) takeError: (id)anError;
+- (HLDeferred *) notify: (HLDeferred *)otherDeferred;
 - (void) cancel;
 
 @end
