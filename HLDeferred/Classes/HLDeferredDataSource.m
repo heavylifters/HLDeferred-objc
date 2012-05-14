@@ -85,8 +85,10 @@
 - (void) cancel
 {
 	[super cancel];
-    [self setError: kHLDeferredCancelled];
-    [self asyncCompleteOperationError];
+    if ([self isExecuting]) {
+        [self setError: kHLDeferredCancelled];
+        [self asyncCompleteOperationError];
+    }
 }
 
 // overridden by HLDeferredConcurrentDataSource
