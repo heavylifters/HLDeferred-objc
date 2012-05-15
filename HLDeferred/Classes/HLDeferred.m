@@ -75,8 +75,8 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 @property (nonatomic, strong) HLDeferred *chainedTo;
 
 - (id) _continue: (id)newResult;
-- (void) _run;
-- (void) _startRun: (id)aResult;
+- (void) _runCallbacks;
+- (void) _startRunCallbacks: (id)aResult;
 
 @end
 
@@ -139,7 +139,7 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
     pauseCount_--;
     if (pauseCount_ > 0) return;
     if (called_) {
-        [self _run];
+        [self _runCallbacks];
     }
 }
 
@@ -163,7 +163,7 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
         [chain_ addObject: link];
          link = nil;
         if (called_) {
-            [self _run];
+            [self _runCallbacks];
         }
     }
     return self;
@@ -186,7 +186,7 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
     } else {
         finalizer_ = [[HLLink alloc] initWithThenBlock: aThenFinalizer failBlock: aFailFinalizer];
         if (called_) {
-            [self _run];
+            [self _runCallbacks];
         }
     }
     return self;
@@ -195,7 +195,7 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 - (HLDeferred *) takeResult: (id)aResult
 {
     // NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
-    [self _startRun: aResult];
+    [self _startRunCallbacks: aResult];
     return self;
 }
 
@@ -206,7 +206,7 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
     if (![err isKindOfClass: [HLFailure class]]) {
 		err = [[HLFailure alloc] initWithValue: anError];
     }
-    [self _startRun: err];
+    [self _startRunCallbacks: err];
     return self;
 }
 
@@ -249,7 +249,7 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
  #pragma mark Private API: processing machinery
  */
 
-- (void) _startRun: (id)aResult
+- (void) _startRunCallbacks: (id)aResult
 {
     // NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
     if (finalized_) {
@@ -270,10 +270,10 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
     }
     called_ = YES;
     [self setResult: aResult];
-    [self _run];
+    [self _runCallbacks];
 }
 
-- (void) _run
+- (void) _runCallbacks
 {
     // NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
     if (running_) return;
@@ -309,7 +309,7 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
             [chain_ addObject: finalizer_];
              finalizer_ = nil;
             finalized_ = YES;
-            [self _run];
+            [self _runCallbacks];
         }
     }
     // NSLog(@"%@ in %@, done", self, NSStringFromSelector(_cmd));
