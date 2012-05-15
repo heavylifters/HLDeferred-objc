@@ -69,6 +69,37 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 
 @end
 
+@interface HLContinuationLink : HLLink
+{
+    HLDeferred *deferred_;
+}
+
+@property (nonatomic, readonly, strong) HLDeferred *deferred;
+
+- (id) initWithDeferred: (HLDeferred *)d;
+
+@end
+
+@implementation HLContinuationLink
+
+@synthesize deferred=deferred_;
+
+- (id) initWithDeferred: (HLDeferred *)deferred
+{
+    self = [super initWithThenBlock: nil failBlock: nil];
+    if (self) {
+        deferred_ = deferred;
+    }
+    return self;
+}
+
+- (id) process: (id)input
+{
+    return input;
+}
+
+@end
+
 @interface HLDeferred ()
 
 @property (nonatomic, strong) id result;
