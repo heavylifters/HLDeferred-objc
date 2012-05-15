@@ -9,6 +9,7 @@
 #import "HLFailure.h"
 
 extern NSString * const kHLDeferredCancelled;
+extern NSString * const kHLDeferredNoResult;
 
 typedef id (^ThenBlock)(id result);
 typedef id (^FailBlock)(HLFailure *failure);

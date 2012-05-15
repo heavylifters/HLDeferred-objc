@@ -9,6 +9,7 @@
 #import "HLDeferred.h"
 
 NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
+NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 
 @interface HLLink : NSObject
 {
@@ -103,7 +104,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
         called_ = NO;
 		suppressAlreadyCalled_ = NO;
         running_ = NO;
-        result_ = nil;
+        result_ = kHLDeferredNoResult;
         pauseCount_ = 0;
         finalized_ = NO;
         finalizer_ = nil;
