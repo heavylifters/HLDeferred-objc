@@ -34,6 +34,8 @@ typedef void (^HLVoidBlock)(void);
     NSMutableArray *chain_;
     id <HLDeferredCancellable> canceller_;
     HLLink *finalizer_;
+    
+    HLDeferred *chainedTo_;
 }
 
 @property (nonatomic, assign) id <HLDeferredCancellable> canceller;

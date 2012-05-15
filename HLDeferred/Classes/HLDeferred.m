@@ -72,6 +72,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 @interface HLDeferred ()
 
 @property (nonatomic, retain) id result;
+@property (nonatomic, retain) HLDeferred *chainedTo;
 
 - (id) _continue: (id)newResult;
 - (void) _run;
@@ -84,6 +85,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 @synthesize result=result_;
 @synthesize canceller=canceller_;
 @synthesize called=called_;
+@synthesize chainedTo=chainedTo_;
 
 + (HLDeferred *) deferredWithResult: (id)aResult { return [[[[self alloc] init] autorelease] takeResult: aResult]; }
 + (HLDeferred *) deferredWithError:  (id)anError { return [[[[self alloc] init] autorelease] takeError:  anError]; }
@@ -124,7 +126,7 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
     [result_ release]; result_ = nil;
     [finalizer_ release]; finalizer_ = nil;
     [chain_ release]; chain_ = nil;
-    
+    [chainedTo_ release]; chainedTo_ = nil;
     [super dealloc];
 }
 
