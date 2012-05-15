@@ -29,7 +29,7 @@ typedef void (^HLVoidBlock)(void);
     BOOL finalized_;
     BOOL called_;
 	BOOL suppressAlreadyCalled_;
-    BOOL running_;
+    BOOL runningCallbacks_;
     id result_;
     NSInteger pauseCount_;
     NSMutableArray *chain_;

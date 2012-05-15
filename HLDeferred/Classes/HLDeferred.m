@@ -104,7 +104,7 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 	if (self) {
         called_ = NO;
 		suppressAlreadyCalled_ = NO;
-        running_ = NO;
+        runningCallbacks_ = NO;
         result_ = [kHLDeferredNoResult retain];
         pauseCount_ = 0;
         finalized_ = NO;
@@ -280,7 +280,7 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 - (void) _runCallbacks
 {
     // NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
-    if (running_) return;
+    if (runningCallbacks_) return;
     if (pauseCount_ == 0) {
         // NSLog(@"%@ in %@, not paused", self, NSStringFromSelector(_cmd));
         HLLink *link = nil;
@@ -289,11 +289,11 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
             @try {
                 link = [[chain_ objectAtIndex: 0] retain];
                 [chain_ removeObjectAtIndex: 0];
-                running_ = YES;
+                runningCallbacks_ = YES;
                 @try {
                     [self setResult: [link process: result_]];
                 } @finally {
-                    running_ = NO;
+                    runningCallbacks_ = NO;
                 }
                 if ([result_ isKindOfClass: [HLDeferred class]]) {
                     // NSLog(@"%@ in %@, result is HLDeferred, pausing", self, NSStringFromSelector(_cmd));
