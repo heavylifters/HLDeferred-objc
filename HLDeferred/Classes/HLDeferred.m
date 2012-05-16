@@ -112,7 +112,6 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 @property (nonatomic, retain) id result;
 @property (nonatomic, retain) HLDeferred *chainedTo;
 
-- (id) _continue: (id)newResult;
 - (void) _runCallbacks;
 - (void) _startRunCallbacks: (id)aResult;
 
@@ -317,51 +316,92 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 - (void) _runCallbacks
 {
     // NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
-    if (runningCallbacks_) return;
-    if (pauseCount_ == 0) {
-        // NSLog(@"%@ in %@, not paused", self, NSStringFromSelector(_cmd));
-        HLLink *link = nil;
-        while ([chain_ count] > 0) {
-            // NSLog(@"%@ in %@, running callback", self, NSStringFromSelector(_cmd));
+    if (runningCallbacks_) return; // Don't recursively run callbacks
+    
+    // Keep track of all the HLDeferreds encountered while propagating results
+    // up a chain.  The way a HLDeferred gets onto this stack is by having
+    // added its _continuation() to the callbacks list of a second HLDeferred
+    // and then that second HLDeferred being fired.  ie, if ever had _chainedTo
+    // set to something other than nil, you might end up on this stack.
+    NSMutableArray *chain = [NSMutableArray arrayWithObject: self];
+
+    while ([chain count]) {
+        HLDeferred *current = [chain lastObject];
+        
+        if (current->pauseCount_) {
+            // This HLDeferred isn't going to produce a result at all.  All the
+            // HLDeferreds up the chain waiting on it will just have to...
+            // wait.
+            return;
+        }
+        
+        BOOL finished = YES;
+        [current setChainedTo: nil];
+        while ([current->chain_ count]) {
+            HLLink *item = [[current->chain_ objectAtIndex: 0] retain];
+            [current->chain_ removeObjectAtIndex: 0];
+            
+            if ([item isKindOfClass: [HLContinuationLink class]]) {
+                // Give the waiting HLDeferred our current result and then
+                // forget about that result ourselves.
+                HLDeferred *chainee = [(HLContinuationLink *)item deferred];
+                [chainee setResult: [current result]];
+                // [current setResult: nil]; // Twisted does this, HLDeferred does NOT
+                chainee->pauseCount_ -= 1;
+                [chain addObject: chainee];
+                // Delay popping this HLDeferred from the chain
+                // until after we've dealt with chainee.
+                finished = NO;
+                [item release]; item = nil;
+                break;
+            }
+            
             @try {
-                link = [[chain_ objectAtIndex: 0] retain];
-                [chain_ removeObjectAtIndex: 0];
-                runningCallbacks_ = YES;
+                current->runningCallbacks_ = YES;
                 @try {
-                    [self setResult: [link process: result_]];
+                    [current setResult: [item process: [current result]]];
                 } @finally {
-                    runningCallbacks_ = NO;
+                    current->runningCallbacks_ = NO;
                 }
-                if ([result_ isKindOfClass: [HLDeferred class]]) {
-                    // NSLog(@"%@ in %@, result is HLDeferred, pausing", self, NSStringFromSelector(_cmd));
-                    [self pause];
-                    [result_ then: ^(id result) { [self _continue: result]; return result; }
-                             fail: ^(HLFailure *failure) { [self _continue: failure]; return failure; }];
-                    break;
+                if ([[current result] isKindOfClass: [HLDeferred class]]) {
+                    HLDeferred *currentResult = (HLDeferred *)[current result];
+                    // The result is another HLDeferred.  If it has a result,
+                    // we can take it and keep going.
+                    id resultResult = [currentResult result];
+                    if ((resultResult == kHLDeferredNoResult) || [resultResult isKindOfClass: [HLDeferred class]] || currentResult->pauseCount_) {
+                        // Nope, it didn't. Pause and chain.
+                        [current pause];
+                        [current setChainedTo: currentResult];
+                        // Note: currentResult has no result, so it's not
+                        // running its chain_ right now.  Therefore we can
+                        // append to the chain_ list directly instead of
+                        // using then:fail:.
+                        [currentResult->chain_ addObject: [[[HLContinuationLink alloc] initWithDeferred: current] autorelease]];
+                        break;
+                    } else {
+                        // Yep, it did. Steal it.
+                        [current setResult: resultResult];
+                        // [currentResult setResult: nil]; // Twisted does this, HLDeferred does NOT
+                    }
                 }
-            } @catch (NSException *e) {
-                // NSLog(@"%@ in %@, caught exception: %@", self, NSStringFromSelector(_cmd), e);
-				[self setResult: [HLFailure wrap: e]];
+            } @catch (NSException *exception) {
+                [current setResult: [HLFailure wrap: exception]];
             } @finally {
-                [link release]; link = nil;
+                [item release]; item = nil;
             }
         }
-        if (finalizer_ && (pauseCount_ == 0)) {
-            [chain_ addObject: finalizer_];
-            [finalizer_ release]; finalizer_ = nil;
-            finalized_ = YES;
-            [self _runCallbacks];
+        if (current->finalizer_ && (current->pauseCount_ == 0)) {
+            [current->chain_ addObject: current->finalizer_];
+            [current->finalizer_ release]; current->finalizer_ = nil;
+            current->finalized_ = YES;
+            [current _runCallbacks];
+        }
+        
+        if (finished) {
+            [chain removeLastObject];
         }
     }
     // NSLog(@"%@ in %@, done", self, NSStringFromSelector(_cmd));
-}
-
-- (id) _continue: (id)newResult
-{
-    // NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
-    [self setResult: newResult];
-    [self unpause];
-    return result_;
 }
 
 @end
