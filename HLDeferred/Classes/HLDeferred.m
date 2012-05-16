@@ -262,8 +262,19 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 - (HLDeferred *) notify: (HLDeferred *)otherDeferred
 {
 	// NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
-	return [self then: ^(id result) { [otherDeferred takeResult: result]; return result; }
-                 fail: ^(HLFailure *failure) { [otherDeferred takeError: failure]; return failure; }];
+    if (finalized_) {
+        @throw [NSException exceptionWithName: NSInternalInconsistencyException
+                                       reason: @"HLDeferred has been finalized"
+                                     userInfo: nil];
+    } else {
+        HLLink *link = [[HLContinuationLink alloc] initWithDeferred: otherDeferred];
+        [chain_ addObject: link];
+        [link release]; link = nil;
+        if (called_) {
+            [self _runCallbacks];
+        }
+    }
+    return self;
 }
 
 - (void) cancel
