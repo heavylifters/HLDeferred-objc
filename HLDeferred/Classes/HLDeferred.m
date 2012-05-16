@@ -295,8 +295,8 @@ NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
                 if ([result_ isKindOfClass: [HLDeferred class]]) {
                     // NSLog(@"%@ in %@, result is HLDeferred, pausing", self, NSStringFromSelector(_cmd));
                     [self pause];
-                    [result_ then: ^(id result) { return [self _continue: result]; }
-                             fail: ^(HLFailure *failure) { return [self _continue: failure]; }];
+                    [result_ then: ^(id result) { [self _continue: result]; return result; }
+                             fail: ^(HLFailure *failure) { [self _continue: failure]; return failure; }];
                     break;
                 }
             } @catch (NSException *e) {
