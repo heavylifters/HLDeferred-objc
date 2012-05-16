@@ -151,6 +151,29 @@
 	[d release];
 }
 
+- (void) testRaisingExceptionsInCallbacks
+{
+    HLDeferred *d1 = [[HLDeferred alloc] init];
+    
+    __block BOOL success = NO;
+    
+    [d1 then: ^id(id result) {
+        [NSException raise: @"TestException" format: @""];
+        return result;
+    }];
+    
+    [d1 fail: ^id(HLFailure *failure) {
+        success = YES;
+        return failure;
+    }];
+    
+    [d1 takeResult: @"starting"];
+    
+    GHAssertTrue(success, @"errback should have bene called");
+    
+    [d1 release];
+}
+
 - (void) testPausing
 {
     HLDeferred *d1 = [[HLDeferred alloc] init];
