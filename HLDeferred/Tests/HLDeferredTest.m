@@ -33,15 +33,18 @@
 {
     HLDeferred *d = [[HLDeferred alloc] init];
     __block BOOL success = NO;
+    __block id blockResult = nil;
     
     [d then: ^(id result) {
         success = YES;
-        GHAssertEqualStrings(result, @"success", @"unexpected callback result");
+        blockResult = [result retain];
         return result;
     }];
     
     [d takeResult: @"success"];
     GHAssertTrue(success, @"callback did not run");
+    GHAssertEqualStrings(blockResult, @"success", @"unexpected callback result");
+    [blockResult release];
 	[d release];
 }
 
@@ -73,6 +76,14 @@
 	
     [d takeResult: @"starting"];
     GHAssertEquals(count, callbackCount, @"count doesn't equal callbackCount");
+    
+    __block HLFailure *failed = nil;
+    [d fail: ^id(HLFailure *failure) {
+        failed = [failure retain];
+        return failure;
+    }];
+    GHAssertNil([failed autorelease], @"%@", [failed value]);
+    
 	[d release];
 }
 
@@ -80,15 +91,23 @@
 {
     HLDeferred *d = [[HLDeferred alloc] init];
     __block BOOL success = NO;
+    __block NSException *blockException = nil;
     
     [d fail: ^(HLFailure *failure) {
-        success = YES;
-        GHAssertEqualStrings([failure value], @"success", @"unexpected errback result");
-        return failure;
+        @try {
+            success = YES;
+            GHAssertEqualStrings([failure value], @"success", @"unexpected errback result");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return failure;
+        }
     }];
     
     [d takeError: @"success"];
     GHAssertTrue(success, @"errback did not run");
+    GHAssertNil([blockException autorelease], @"%@", blockException);
+    
 	[d release];
 }
 
@@ -120,7 +139,15 @@
 	
     [d takeError: @"starting"];
     GHAssertEquals(count, errbackCount, @"count doesn't equal errbackCount");
-	[d release];
+    
+    __block id blockResult = nil;
+    [d then: ^id(id result) {
+        blockResult = [result retain];
+        return result;
+    }];
+    GHAssertNil([blockResult autorelease], @"%@", blockResult);
+	
+    [d release];
 }
 
 - (void) testSwitchingBetweenCallbacksAndErrbacks
@@ -148,30 +175,45 @@
 		GHFail(@"errback should not have been called");
 		return failure;
 	}];
+    
+    __block HLFailure *failed = nil;
+    [d fail: ^id(HLFailure *failure) {
+        failed = [failure retain];
+        return failure;
+    }];
+    GHAssertNil([failed autorelease], @"%@", [failed value]);
+
 	[d release];
 }
 
 - (void) testRaisingExceptionsInCallbacks
 {
-    HLDeferred *d1 = [[HLDeferred alloc] init];
+    HLDeferred *d = [[HLDeferred alloc] init];
     
     __block BOOL success = NO;
     
-    [d1 then: ^id(id result) {
+    [d then: ^id(id result) {
         [NSException raise: @"TestException" format: @""];
         return result;
     }];
     
-    [d1 fail: ^id(HLFailure *failure) {
+    [d fail: ^id(HLFailure *failure) {
         success = YES;
         return failure;
     }];
     
-    [d1 takeResult: @"starting"];
+    [d takeResult: @"starting"];
     
     GHAssertTrue(success, @"errback should have bene called");
     
-    [d1 release];
+    __block id blockResult = nil;
+    [d then: ^id(id result) {
+        blockResult = [result retain];
+        return result;
+    }];
+    GHAssertNil([blockResult autorelease], @"%@", blockResult);
+    
+    [d release];
 }
 
 - (void) testPausing
@@ -181,27 +223,72 @@
 	
 	__block int x = 0;
 	
-	[d2 then: ^(id result) {
-		x++;
-		return @"ok";
+	[d1 then: ^id(id result) {
+        GHTestLog(@"x=%d: d1 then (first) %@", x, result);
+        GHAssertEquals(0, x, nil);
+        x++;
+        return d2;
 	}];
 	
-	[d1 then: ^(id result) {
-		x++;
-		return d2;
+	[d2 then: ^id(id result) {
+        GHTestLog(@"x=%d: d2 then (first) %@", x, result);
+        GHAssertEquals(1, x, nil);
+        x++;
+        return @"ok";
 	}];
 	
-	[d1 then: ^(id result) {
-		x++;
-		GHAssertEqualStrings(@"ok", result, @"expected result ok from d2");
-		return result;
-	}];
+    [d2 then: ^id(id result) {
+        GHTestLog(@"x=%d: d2 then (second) %@", x, result);
+        GHAssertEquals(2, x, nil);
+        GHAssertEqualStrings(@"ok", result, nil);
+        x++;
+        return @"d2-second";
+    }];
 	
-	GHAssertEquals(x, 0, @"x is not 0");
+    // this should not run until d2 receives takeResult:
+	[d1 then: ^id(id result) {
+        GHTestLog(@"x=%d: d1 then (second) %@", x, result);
+        GHAssertEquals(3, x, nil);
+        GHAssertEqualStrings(@"d2-second", result, nil);
+        x++;
+        return @"d1-second";
+	}];
+    
+	GHAssertEquals(x, 0, nil);
 	[d1 takeResult: @"starting"];
-	GHAssertEquals(x, 1, @"x is not 1");
 	[d2 takeResult: @"starting"];
-	GHAssertEquals(x, 3, @"x is not 3");
+    
+    [d1 then: ^id(id result) {
+        GHTestLog(@"x=%d: d1 then (third) %@", x, result);
+        GHAssertEquals(4, x, nil);
+        GHAssertEqualStrings(@"d1-second", result, nil);
+        x++;
+        return @"d1-third";
+    }];
+    
+    [d2 then: ^id(id result) {
+        GHTestLog(@"x=%d: d2 then (third) %@", x, result);
+        GHAssertEquals(5, x, nil);
+        GHAssertEqualStrings(@"d2-second", result, nil);
+        x++;
+        return @"d2-third";
+    }];
+    
+    __block HLFailure *failed = nil;
+    [d1 fail: ^(HLFailure *failure) {
+        failed = [failure retain];
+        return failure;
+    }];
+    GHAssertNil([failed autorelease], @"%@", [failed value]);
+    failed = nil;
+    
+    [d2 fail: ^(HLFailure *failure) {
+        failed = [failure retain];
+        return failure;
+    }];
+    GHAssertNil([failed autorelease], @"%@", [failed value]);
+    failed = nil;
+    
 	[d1 release];
 	[d2 release];
 }
@@ -243,6 +330,27 @@
         return result;
     }];
     
+    __block HLFailure *failed = nil;
+    [d1 fail: ^id(HLFailure *failure) {
+        failed = [failure retain];
+        return failure;
+    }];
+    GHAssertNil([failed autorelease], @"%@", [failed value]);
+    failed = nil;
+
+    [d2 fail: ^id(HLFailure *failure) {
+        failed = [failure retain];
+        return failure;
+    }];
+    GHAssertNil([failed autorelease], @"%@", [failed value]);
+    failed = nil;
+
+    [d3 fail: ^id(HLFailure *failure) {
+        failed = [failure retain];
+        return failure;
+    }];
+    GHAssertNil([failed autorelease], @"%@", [failed value]);
+
 	[d1 release];
 	[d2 release];
 }
@@ -258,8 +366,8 @@
 	__block HLFailure *theFailure = nil;
 
 	[d fail: ^(HLFailure *failure) {
-        theFailure = [failure retain];
 		success = YES;
+        theFailure = [failure retain];
 		return failure;
 	}];
 
@@ -278,15 +386,22 @@
 {
     HLDeferred *d = [[HLDeferred alloc] init];
     __block BOOL success = NO;
-
+    __block NSException *blockException = nil;
+    
     [d thenFinally: ^(id result) {
-        GHAssertEqualStrings(result, @"success", @"unexpected callback result");
-        success = YES;
-        return result;
+        @try {
+            success = YES;
+            GHAssertEqualStrings(result, @"success", @"unexpected callback result");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return result;
+        }
     }];
 
     [d takeResult: @"success"];
     GHAssertTrue(success, @"callback did not run");
+    GHAssertNil([blockException autorelease], @"%@", blockException);
 	[d release];
 }
 
@@ -294,11 +409,17 @@
 {
     HLDeferred *d = [[HLDeferred alloc] init];
     NSMutableString *s = [[NSMutableString alloc] init];
-
+    __block NSException *blockException = nil;
+    
     [d thenFinally: ^(id result) {
-        GHAssertEqualStrings(result, @"success", @"unexpected callback result");
-        [s appendString: @"f"];
-        return result;
+        @try {
+            GHAssertEqualStrings(result, @"success", @"unexpected callback result");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            [s appendString: @"f"];
+            return result;
+        }
     }];
     [d then: ^(id result) {
         GHAssertEqualStrings(result, @"success", @"unexpected callback result");
@@ -306,9 +427,17 @@
         return result;
     }];
     
+    __block HLFailure *failed = nil;
+    [d fail: ^(HLFailure *failure) {
+        failed = [failure retain];
+        return failure;
+    }];
+    
     [d takeResult: @"success"];
+    GHAssertNil([blockException autorelease], @"%@", blockException);
     GHAssertTrue([s length] > 0, @"callback did not run");
     GHAssertEqualStrings(s, @"cf", @"callback should have run, then finalizer");
+    GHAssertNil([failed autorelease], @"%@", [failed value]);
     [s release];
 	[d release];
 }

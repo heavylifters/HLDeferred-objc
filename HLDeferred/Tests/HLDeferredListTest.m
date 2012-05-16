@@ -62,14 +62,21 @@
 	GHAssertTrue([d isCalled], @"HLDeferredList should resolve with 1 result if fireOnFirstResult is YES");
 
 	__block BOOL success = NO;
+	__block NSException *blockException = nil;
 	
 	[d1 then: ^(id result) {
-		GHAssertEqualStrings(result, @"ok", @"first result not received");
-		success = YES;
-		return result;
+        @try {
+            success = YES;
+            GHAssertEqualStrings(result, @"ok", @"first result not received");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return result;
+        }
 	}];
 	
 	GHAssertTrue(success, @"callback wasn't called on resolved HLDeferredList");
+	GHAssertNil([blockException autorelease], @"%@", blockException);
 	
 	[d release];
 	[d1 release];
@@ -93,15 +100,21 @@
 	GHAssertTrue([d isCalled], @"HLDeferredList should be resolved");
 	
 	__block BOOL success = NO;
-	
+	__block NSException *blockException = nil;
+    
 	[d then: ^(id result) {
-		GHAssertEqualStrings([result objectAtIndex: 0], @"ok", @"expected result not received");
-		success = YES;
-		return result;
+		@try {
+            success = YES;
+            GHAssertEqualStrings([result objectAtIndex: 0], @"ok", @"expected result not received");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return result;
+        }
 	}];
 	
 	GHAssertTrue(success, @"callback wasn't called on resolved HLDeferredList");
-	
+	GHAssertNil([blockException autorelease], @"%@", blockException);
 	[d release];
 	[d1 release];
 }
@@ -116,16 +129,23 @@
 	GHAssertTrue([d isCalled], @"HLDeferredList should be resolved");
 	
 	__block BOOL success = NO;
+	__block NSException *blockException = nil;
 	
 	[d then: ^(id result) {
-		GHAssertEquals((int)[result count], 1, @"expected one result");
-		GHAssertTrue([[result objectAtIndex: 0] isKindOfClass: [HLFailure class]], @"first result should be HLFailure");
-		GHAssertEqualStrings([(HLFailure *)[result objectAtIndex: 0] value], @"ok", @"expected first result value not received");
-		success = YES;
-		return result;
+        @try {
+            success = YES;
+            GHAssertEquals((int)[result count], 1, @"expected one result");
+            GHAssertTrue([[result objectAtIndex: 0] isKindOfClass: [HLFailure class]], @"first result should be HLFailure");
+            GHAssertEqualStrings([(HLFailure *)[result objectAtIndex: 0] value], @"ok", @"expected first result value not received");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return result;
+        }
 	}];
 	
 	GHAssertTrue(success, @"callback wasn't called on resolved HLDeferredList");
+	GHAssertNil([blockException autorelease], @"%@", blockException);
 	
 	[d release];
 	[d1 release];
@@ -139,17 +159,24 @@
 	GHAssertFalse([d isCalled], @"HLDeferredList shouldn't immediately resolve, no results yet");
 
 	__block BOOL success = NO;
+	__block NSException *blockException = nil;
 	
 	[d then: ^(id result) {
-		GHAssertEqualStrings([result objectAtIndex: 0], @"ok", @"expected result not received");
-		success = YES;
-		return result;
+        @try {
+            success = YES;
+            GHAssertEqualStrings([result objectAtIndex: 0], @"ok", @"expected result not received");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return result;
+        }
 	}];
 	
 	[d1 takeResult: @"ok"];
 	GHAssertTrue([d isCalled], @"HLDeferredList should be resolved");
 	
 	GHAssertTrue(success, @"callback wasn't called on resolved HLDeferredList");
+	GHAssertNil([blockException autorelease], @"%@", blockException);
 	
 	[d release];
 	[d1 release];
@@ -168,17 +195,24 @@
 	GHAssertTrue([d isCalled], @"HLDeferredList should be resolved");
 	
 	__block BOOL success = NO;
+	__block NSException *blockException = nil;
 	
 	[d then: ^(id result) {
-		GHAssertTrue([result isKindOfClass: [NSArray class]], @"callback result should be NSArray");
-		GHAssertEquals((int)[result count], 2, @"expected two results");
-		GHAssertEqualStrings([result objectAtIndex: 0], @"ok1", @"expected first result not received");
-		GHAssertEqualStrings([result objectAtIndex: 1], @"ok2", @"expected second result not received");
-		success = YES;
-		return result;
+        @try {
+            success = YES;
+            GHAssertTrue([result isKindOfClass: [NSArray class]], @"callback result should be NSArray");
+            GHAssertEquals((int)[result count], 2, @"expected two results");
+            GHAssertEqualStrings([result objectAtIndex: 0], @"ok1", @"expected first result not received");
+            GHAssertEqualStrings([result objectAtIndex: 1], @"ok2", @"expected second result not received");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return result;
+        }
 	}];
 	
 	GHAssertTrue(success, @"callback wasn't called on resolved HLDeferredList");
+	GHAssertNil([blockException autorelease], @"%@", blockException);
 	
 	[d release];
 	[d1 release];
@@ -218,24 +252,38 @@
 	GHAssertTrue([d isCalled], @"HLDeferredList should resolve with 1 error if fireOnFirstError is YES");
 	
 	__block BOOL success = NO;
+	__block NSException *blockException = nil;
 	
 	[d1 fail: ^(HLFailure *failure) {
-		GHAssertEqualStrings([failure value], @"ok", @"error not received");
-		success = YES;
-		return failure;
+        @try {
+            success = YES;
+            GHAssertEqualStrings([failure value], @"ok", @"error not received");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return failure;
+        }
 	}];
 	
 	GHAssertTrue(success, @"errback wasn't called on resolved HLDeferred");
-	
+	GHAssertNil([blockException autorelease], @"%@", blockException);
+    blockException = nil;
+    
 	success = NO;
 	
 	[d fail: ^(HLFailure *failure) {
-		GHAssertEqualStrings([failure value], @"ok", @"first error not received");
-		success = YES;
-		return failure;
+        @try {
+            success = YES;
+            GHAssertEqualStrings([failure value], @"ok", @"first error not received");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return failure;
+        }
 	}];
 	
 	GHAssertTrue(success, @"errback wasn't called on resolved HLDeferredList");
+	GHAssertNil([blockException autorelease], @"%@", blockException);
 	
 	[d release];
 	[d1 release];
@@ -249,26 +297,46 @@
     HLDeferredList *d = [[HLDeferredList alloc] initWithDeferreds: [NSArray arrayWithObjects: d1, nil]
 													consumeErrors: YES];
 
+    __block NSException *blockException = nil;
+    
 	[d1 then: ^(id result) {
-		GHAssertNil(result, @"callback result should be nil (consumed by HLDeferredList)");
-		return result;
+        @try {
+            GHAssertNil(result, @"callback result should be nil (consumed by HLDeferredList)");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return result;
+        }
 	} fail: ^(HLFailure *failure) {
-		GHFail(@"errback was called but the error should have been consumed by the HLDeferredList");
-		return failure;
+        @try {
+            GHFail(@"errback was called but the error should have been consumed by the HLDeferredList");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return failure;
+        }
 	}];
 	
 	GHAssertFalse([d isCalled], @"HLDeferredList shouldn't immediately resolve, no results yet");
 	[d1 takeError: @"ok"];
 	GHAssertTrue([d1 isCalled], @"Deferred with error should resolve");
 	GHAssertTrue([d isCalled], @"HLDeferredList should resolve with 1 error if fireOnFirstError is YES");
+    GHAssertNil([blockException autorelease], @"%@", blockException);
+    blockException = nil;
 
 	[d then: ^(id result) {
-		GHAssertTrue([result isKindOfClass: [NSArray class]], @"callback result should be NSArray");
-		GHAssertEquals((int)[result count], 1, @"expected one result");
-		GHAssertTrue([[result objectAtIndex: 0] isKindOfClass: [HLFailure class]], @"callback result first element should be HLFailure");
-		GHAssertEqualStrings([(HLFailure *)[result objectAtIndex: 0] value], @"ok", @"expected error not received");
-		return result;
-	}];
+        @try {
+            GHAssertTrue([result isKindOfClass: [NSArray class]], @"callback result should be NSArray");
+            GHAssertEquals((int)[result count], 1, @"expected one result");
+            GHAssertTrue([[result objectAtIndex: 0] isKindOfClass: [HLFailure class]], @"callback result first element should be HLFailure");
+            GHAssertEqualStrings([(HLFailure *)[result objectAtIndex: 0] value], @"ok", @"expected error not received");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return result;
+        }
+	}];    
+    GHAssertNil([blockException autorelease], @"%@", blockException);
 	
 	[d release];
 	[d1 release];
@@ -280,16 +348,23 @@
 	HLDeferred *d2 = [[HLDeferred alloc] init];
 	HLDeferredList *d = [[HLDeferredList alloc] initWithDeferreds: [NSArray arrayWithObjects: d1, d2, nil]];
 	__block BOOL success = NO;
+    __block NSException *blockException = nil;
 	
 	[d fail: ^(HLFailure *failure) {
-		success = YES;
-		GHAssertEquals([failure value], kHLDeferredCancelled, @"errback should have been run with a kHLDeferredCancelled value");
-		return failure;
+        @try {
+            success = YES;
+            GHAssertEquals([failure value], kHLDeferredCancelled, @"errback should have been run with a kHLDeferredCancelled value");
+        } @catch (NSException *exception) {
+            blockException = [exception retain];
+        } @finally {
+            return failure;
+        }
 	}];
 	
 	GHAssertFalse(success, @"errback run too soon");
 	[d cancel];
 	GHAssertTrue(success, @"errback should have run");
+    GHAssertNil([blockException autorelease], @"%@", blockException);
 	
 	[d release];
 	[d2 release];
