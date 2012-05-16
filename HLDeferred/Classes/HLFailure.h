@@ -15,5 +15,6 @@
 
 - (id) initWithValue: (id)v;
 - (id) value;
+- (NSError *) valueAsError;
 
 @end

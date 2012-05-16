@@ -14,7 +14,7 @@
 {
 	self = [super init];
 	if (self) {
-		value_ = [v retain];
+		value_ = [([v isKindOfClass: [HLFailure class]] ? [(HLFailure *)v value] : v) retain];
 	}
 	return self;
 }
@@ -38,5 +38,14 @@
 }
 
 - (id) value { return value_; }
+
+- (NSError *) valueAsError
+{
+    if ([value_ isKindOfClass: [NSError class]]) {
+        return value_;
+    } else {
+        return [NSError errorWithDomain: @"HLFailure" code: 0 userInfo: [NSDictionary dictionaryWithObject: value_ forKey: @"value"]];
+    }
+}
 
 @end
