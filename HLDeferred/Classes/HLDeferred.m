@@ -395,7 +395,7 @@ NSString * const HLDeferredAlreadyFinalizedException = @"HLDeferredAlreadyFinali
                 HLDeferred *chainee = [(HLContinuationLink *)item deferred];
                 [chainee setResult: [current result]];
                 // [current setResult: nil]; // Twisted does this, HLDeferred does NOT
-                chainee->pauseCount_ -= 1;
+                chainee->pauseCount_--;
                 [chain addObject: chainee];
                 // Delay popping this HLDeferred from the chain
                 // until after we've dealt with chainee.
