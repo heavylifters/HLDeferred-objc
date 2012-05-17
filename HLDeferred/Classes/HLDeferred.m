@@ -258,11 +258,19 @@ NSString * const HLDeferredAlreadyFinalizedException = @"HLDeferredAlreadyFinali
     if (finalized_) {
         @throw [self _alreadyFinalizedException];
     } else {
-        HLLink *link = [[HLContinuationLink alloc] initWithDeferred: otherDeferred];
-        [chain_ addObject: link];
-        link = nil;
-        if (called_) {
-            [self _runCallbacks];
+        if ([otherDeferred isCalled]) {
+            @throw [self _alreadyCalledException];
+        } else if ([otherDeferred chainedTo]) {
+            @throw [self _alreadyChainedException];
+        } else {
+            otherDeferred->pauseCount_++;
+            [otherDeferred setChainedTo: self];
+            HLLink *link = [[HLContinuationLink alloc] initWithDeferred: otherDeferred];
+            [chain_ addObject: link];
+            link = nil;
+            if ([self isCalled]) {
+                [self _runCallbacks];
+            }
         }
     }
     return self;
@@ -420,14 +428,13 @@ NSString * const HLDeferredAlreadyFinalizedException = @"HLDeferredAlreadyFinali
                 item = nil;
             }
         }
-        if (current->finalizer_ && (current->pauseCount_ == 0)) {
-            [current->chain_ addObject: current->finalizer_];
-            current->finalizer_ = nil;
-            current->finalized_ = YES;
-            [current _runCallbacks];
-        }
-        
         if (finished) {
+            if (current->finalizer_ && (current->pauseCount_ == 0)) {
+                [current->chain_ addObject: current->finalizer_];
+                current->finalizer_ = nil;
+                current->finalized_ = YES;
+                [current _runCallbacks];
+            }
             [chain removeLastObject];
         }
     }
