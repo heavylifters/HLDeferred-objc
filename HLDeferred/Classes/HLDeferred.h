@@ -10,6 +10,8 @@
 
 extern NSString * const kHLDeferredCancelled;
 extern NSString * const kHLDeferredNoResult;
+extern NSString * const HLDeferredAlreadyCalledException;
+extern NSString * const HLDeferredAlreadyFinalizedException;
 
 typedef id (^ThenBlock)(id result);
 typedef id (^FailBlock)(HLFailure *failure);
