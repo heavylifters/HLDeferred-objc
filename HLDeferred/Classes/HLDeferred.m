@@ -157,22 +157,6 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
      chain_ = nil;
 }
 
-- (void) pause
-{
-    // NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
-    pauseCount_++;
-}
-
-- (void) unpause
-{
-    // NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
-    pauseCount_--;
-    if (pauseCount_ > 0) return;
-    if (called_) {
-        [self _runCallbacks];
-    }
-}
-
 - (HLDeferred *) thenReturn: (id)aResult {
     return [self then: ^(id _) { return aResult; } fail: nil];
 }
@@ -371,7 +355,7 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
                     id resultResult = [currentResult result];
                     if ((resultResult == kHLDeferredNoResult) || [resultResult isKindOfClass: [HLDeferred class]] || currentResult->pauseCount_) {
                         // Nope, it didn't. Pause and chain.
-                        [current pause];
+                        current->pauseCount_++;
                         [current setChainedTo: currentResult];
                         // Note: currentResult has no result, so it's not
                         // running its chain_ right now.  Therefore we can
