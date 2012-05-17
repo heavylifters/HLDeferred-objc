@@ -268,11 +268,19 @@ NSString * const HLDeferredAlreadyFinalizedException = @"HLDeferredAlreadyFinali
     if (finalized_) {
         @throw [self _alreadyFinalizedException];
     } else {
-        HLLink *link = [[HLContinuationLink alloc] initWithDeferred: otherDeferred];
-        [chain_ addObject: link];
-        [link release]; link = nil;
-        if (called_) {
-            [self _runCallbacks];
+        if ([otherDeferred isCalled]) {
+            @throw [self _alreadyCalledException];
+        } else if ([otherDeferred chainedTo]) {
+            @throw [self _alreadyChainedException];
+        } else {
+            otherDeferred->pauseCount_++;
+            [otherDeferred setChainedTo: self];
+            HLLink *link = [[HLContinuationLink alloc] initWithDeferred: otherDeferred];
+            [chain_ addObject: link];
+            [link release]; link = nil;
+            if ([self isCalled]) {
+                [self _runCallbacks];
+            }
         }
     }
     return self;
