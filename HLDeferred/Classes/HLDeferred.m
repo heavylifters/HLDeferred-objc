@@ -10,6 +10,8 @@
 
 NSString * const kHLDeferredCancelled = @"__HLDeferredCancelled__";
 NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
+NSString * const HLDeferredAlreadyCalledException = @"HLDeferredAlreadyCalledException";
+NSString * const HLDeferredAlreadyFinalizedException = @"HLDeferredAlreadyFinalizedException";
 
 @interface HLLink : NSObject
 {
@@ -115,6 +117,11 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 - (void) _runCallbacks;
 - (void) _startRunCallbacks: (id)aResult;
 
+- (NSException *) _alreadyCalledException;
+- (NSException *) _alreadyChainedException;
+- (NSException *) _alreadyFinalizedException;
+- (NSException *) _alreadyHasAFinalizerException;
+
 @end
 
 @implementation HLDeferred
@@ -196,9 +203,7 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 {
     // NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
     if (finalized_) {
-        @throw [NSException exceptionWithName: NSInternalInconsistencyException
-                                 reason: @"HLDeferred has been finalized"
-                               userInfo: nil];
+        @throw [self _alreadyFinalizedException];
     } else {
         HLLink *link = [[HLLink alloc] initWithThenBlock: cb failBlock: eb];
         [chain_ addObject: link];
@@ -217,13 +222,9 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 - (HLDeferred *) thenFinally: (ThenBlock)aThenFinalizer failFinally: (FailBlock)aFailFinalizer
 {
     if (finalized_) {
-        @throw [NSException exceptionWithName: NSInternalInconsistencyException
-                                       reason: @"HLDeferred has been finalized"
-                                     userInfo: nil];
+        @throw [self _alreadyFinalizedException];
     } else if (finalizer_) {
-        @throw [NSException exceptionWithName: NSInternalInconsistencyException
-                                       reason: @"HLDeferred already has a finalizer"
-                                     userInfo: nil];
+        @throw [self _alreadyHasAFinalizerException];
     } else {
         finalizer_ = [[HLLink alloc] initWithThenBlock: aThenFinalizer failBlock: aFailFinalizer];
         if (called_) {
@@ -264,9 +265,7 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 {
 	// NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
     if (finalized_) {
-        @throw [NSException exceptionWithName: NSInternalInconsistencyException
-                                       reason: @"HLDeferred has been finalized"
-                                     userInfo: nil];
+        @throw [self _alreadyFinalizedException];
     } else {
         HLLink *link = [[HLContinuationLink alloc] initWithDeferred: otherDeferred];
         [chain_ addObject: link];
@@ -296,29 +295,56 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
 	}
 }
 
-/*
- #pragma mark -
- #pragma mark Private API: processing machinery
- */
+#pragma mark -
+#pragma mark Private API: Exceptions
+
+- (NSException *) _alreadyCalledException
+{
+    return [NSException exceptionWithName: HLDeferredAlreadyCalledException
+                                   reason: @"this HLDeferred has already been called"
+                                 userInfo: [NSDictionary dictionaryWithObject: self
+                                                                       forKey: @"HLDeferred"]];
+}
+
+- (NSException *) _alreadyFinalizedException
+{
+    return [NSException exceptionWithName: HLDeferredAlreadyFinalizedException
+                                   reason: @"this HLDeferred has already been finalized"
+                                 userInfo: [NSDictionary dictionaryWithObject: self
+                                                                       forKey: @"HLDeferred"]];
+}
+
+- (NSException *) _alreadyChainedException
+{
+    return [NSException exceptionWithName: NSInvalidArgumentException
+                                   reason: @"this HLDeferred is already chained to another HLDeferred"
+                                 userInfo: [NSDictionary dictionaryWithObject: self
+                                                                       forKey: @"HLDeferred"]];
+}
+- (NSException *) _alreadyHasAFinalizerException
+{
+    return [NSException exceptionWithName: NSInternalInconsistencyException
+                                   reason: @"this HLDeferred already has a finalizer"
+                                 userInfo: [NSDictionary dictionaryWithObject: self
+                                                                       forKey: @"HLDeferred"]];
+}
+
+
+#pragma mark -
+#pragma mark Private API: processing machinery
 
 - (void) _startRunCallbacks: (id)aResult
 {
     // NSLog(@"%@ in %@", self, NSStringFromSelector(_cmd));
     if (finalized_) {
-		@throw [NSException exceptionWithName: @"HLDeferredAlreadyCalledException"
-									   reason: @"cannot run an HLDeferred object more than once"
-									 userInfo: [NSDictionary dictionaryWithObject: self
-																		   forKey: @"HLDeferred"]];
+        @throw [self _alreadyFinalizedException];
     }
     if (called_) {
 		if (suppressAlreadyCalled_) {
 			suppressAlreadyCalled_ = NO;
 			return;
 		}
-		@throw [NSException exceptionWithName: @"HLDeferredAlreadyCalledException"
-									   reason: @"cannot run an HLDeferred object more than once"
-									 userInfo: [NSDictionary dictionaryWithObject: self
-																		   forKey: @"HLDeferred"]];
+		@throw [self _alreadyCalledException];
     }
     called_ = YES;
     [self setResult: aResult];
