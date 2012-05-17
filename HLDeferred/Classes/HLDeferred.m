@@ -167,6 +167,23 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
     [super dealloc];
 }
 
+- (NSString *)debugDescription
+{
+    NSString *superDescription = [super debugDescription];
+    NSString *result = superDescription;
+    NSString *extra = nil;
+    if (chainedTo_) {
+        extra = [NSString stringWithFormat: @" (waiting on %@ at %p)>",
+                 NSStringFromClass([chainedTo_ class]), chainedTo_];
+    } else if (result_ == kHLDeferredNoResult) {
+        extra = @">";
+    } else {
+        extra = [NSString stringWithFormat: @" (result: %@)>", result_];
+    }
+    result = [result stringByReplacingOccurrencesOfString: @">" withString: extra];
+    return result;
+}
+
 - (HLDeferred *) thenReturn: (id)aResult {
     return [self then: ^(id _) { return aResult; } fail: nil];
 }
@@ -397,23 +414,6 @@ NSString * const kHLDeferredNoResult = @"__HLDeferredNoResult__";
         }
     }
     // NSLog(@"%@ in %@, done", self, NSStringFromSelector(_cmd));
-}
-
-- (NSString *)debugDescription
-{
-    NSString *superDescription = [super debugDescription];
-    NSString *result = superDescription;
-    NSString *extra = nil;
-    if (chainedTo_) {
-        extra = [NSString stringWithFormat: @" (waiting on %@ at %p)>",
-                           NSStringFromClass([chainedTo_ class]), chainedTo_];
-    } else if (result_ == kHLDeferredNoResult) {
-        extra = @">";
-    } else {
-        extra = [NSString stringWithFormat: @" (result: %@)>", result_];
-    }
-    result = [result stringByReplacingOccurrencesOfString: @">" withString: extra];
-    return result;
 }
 
 @end
