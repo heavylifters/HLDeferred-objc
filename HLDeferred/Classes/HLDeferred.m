@@ -104,6 +104,7 @@ NSString * const HLDeferredAlreadyFinalizedException = @"HLDeferredAlreadyFinali
 
 @interface HLDeferred ()
 
+@property (nonatomic, readwrite, assign, getter=isCalled) BOOL called;
 @property (nonatomic, strong) id result;
 @property (nonatomic, strong) HLDeferred *chainedTo;
 
@@ -197,8 +198,8 @@ NSString * const HLDeferredAlreadyFinalizedException = @"HLDeferredAlreadyFinali
     } else {
         HLLink *link = [[HLLink alloc] initWithThenBlock: cb failBlock: eb];
         [chain_ addObject: link];
-         link = nil;
-        if (called_) {
+        link = nil;
+        if ([self isCalled]) {
             [self _runCallbacks];
         }
     }
@@ -217,7 +218,7 @@ NSString * const HLDeferredAlreadyFinalizedException = @"HLDeferredAlreadyFinali
         @throw [self _alreadyHasAFinalizerException];
     } else {
         finalizer_ = [[HLLink alloc] initWithThenBlock: aThenFinalizer failBlock: aFailFinalizer];
-        if (called_) {
+        if ([self isCalled]) {
             [self _runCallbacks];
         }
     }
@@ -269,13 +270,13 @@ NSString * const HLDeferredAlreadyFinalizedException = @"HLDeferredAlreadyFinali
 
 - (void) cancel
 {
-	if (! called_) {
+	if (! [self isCalled]) {
 		if (canceller_) {
 			[canceller_ deferredWillCancel: self];
 		} else {
 			suppressAlreadyCalled_ = YES;
 		}
-		if ( (! called_) && (canceller_ == nil) ) {
+		if ( (! [self isCalled]) && (canceller_ == nil) ) {
             // if there is a canceller, the canceller
             // must call [d takeError: kHLDeferredCancelled]
 			[self takeError: kHLDeferredCancelled];
@@ -329,14 +330,14 @@ NSString * const HLDeferredAlreadyFinalizedException = @"HLDeferredAlreadyFinali
     if (finalized_) {
         @throw [self _alreadyFinalizedException];
     }
-    if (called_) {
+    if ([self isCalled]) {
 		if (suppressAlreadyCalled_) {
 			suppressAlreadyCalled_ = NO;
 			return;
 		}
 		@throw [self _alreadyCalledException];
     }
-    called_ = YES;
+    [self setCalled: YES];
     [self setResult: aResult];
     [self _runCallbacks];
 }
@@ -364,6 +365,7 @@ NSString * const HLDeferredAlreadyFinalizedException = @"HLDeferredAlreadyFinali
         }
         
         BOOL finished = YES;
+        [current setCalled: YES];
         [current setChainedTo: nil];
         while ([current->chain_ count]) {
             HLLink *item = [current->chain_ objectAtIndex: 0];
