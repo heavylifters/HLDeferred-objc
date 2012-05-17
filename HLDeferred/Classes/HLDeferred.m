@@ -438,14 +438,13 @@ NSString * const HLDeferredAlreadyFinalizedException = @"HLDeferredAlreadyFinali
                 [item release]; item = nil;
             }
         }
-        if (current->finalizer_ && (current->pauseCount_ == 0)) {
-            [current->chain_ addObject: current->finalizer_];
-            [current->finalizer_ release]; current->finalizer_ = nil;
-            current->finalized_ = YES;
-            [current _runCallbacks];
-        }
-        
         if (finished) {
+            if (current->finalizer_ && (current->pauseCount_ == 0)) {
+                [current->chain_ addObject: current->finalizer_];
+                [current->finalizer_ release]; current->finalizer_ = nil;
+                current->finalized_ = YES;
+                [current _runCallbacks];
+            }
             [chain removeLastObject];
         }
     }
