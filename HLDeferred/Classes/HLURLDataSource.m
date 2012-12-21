@@ -138,7 +138,7 @@
 #pragma mark -
 #pragma mark Private API
 
-- (void) connection: (NSURLConnection *)connection didFailWithError: (id)anError
+- (void) connection: (NSURLConnection *)connection didFailWithError: (NSError *)anError
 {
     [self setError: anError];
     [self responseFailed];
