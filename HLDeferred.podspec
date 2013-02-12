@@ -8,7 +8,7 @@
 #
 Pod::Spec.new do |s|
   s.name         = "HLDeferred"
-  s.version      = "0.0.1"
+  s.version      = "0.1.0"
   s.summary      = "Deferreds for iOS based on Twisted's implementation"
   # s.description  = <<-DESC
   #                   An optional longer description of HLDeferred
@@ -49,7 +49,7 @@ Pod::Spec.new do |s|
 
   # Specify the location from where the source should be retrieved.
   #
-  s.source       = { :git => "http://github.com/samuraisam/HLDeferred-objc.git", :tag => "0.1.0" }
+  s.source       = { :git => "https://github.com/samuraisam/HLDeferred-objc.git", :tag => "0.1.0" }
   # s.source       = { :svn => 'http://EXAMPLE/HLDeferred/tags/1.0.0' }
   # s.source       = { :hg  => 'http://EXAMPLE/HLDeferred', :revision => '1.0.0' }
 
@@ -75,7 +75,7 @@ Pod::Spec.new do |s|
   # over the selected files.
   # (See http://rake.rubyforge.org/classes/Rake/FileList.html.)
   #
-  s.source_files = 'Classes', 'Classes/**/*.{h,m}'
+  s.source_files = 'Classes', 'HLDeferred/Classes/**/*.{h,m}'
 
   # A list of file patterns which select the header files that should be
   # made available to the application. If the pattern is a directory then the
@@ -86,7 +86,7 @@ Pod::Spec.new do |s|
   # If you do not explicitly set the list of public header files,
   # all headers of source_files will be made public.
   #
-  s.public_header_files = 'Classes/**/*.h'
+  s.public_header_files = 'HLDeferred/Classes/**/*.h'
 
   # A list of resources included with the Pod. These are copied into the
   # target bundle with a build phase script.
